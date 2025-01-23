@@ -5,29 +5,29 @@ namespace Tfo\AdvancedLog\Services\Logging\Handlers;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Monolog\Formatter\FormatterInterface;
-use Tfo\AdvancedLog\Contracts\LogFormatterInterface;
 use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
 
 class MultiChannelHandler extends AbstractProcessingHandler
 {
-    protected LogFormatterInterface $formatter;
+    protected ?FormatterInterface $formatter = null;
     private array $services;
+    private $customFormatter;
 
     public function __construct(
-        LogFormatterInterface $formatter,
+        $customFormatter,
         array $services,
         $level = \Monolog\Level::Debug,
         bool $bubble = true
     ) {
         parent::__construct($level, $bubble);
-        $this->formatter = $formatter;
+        $this->customFormatter = $customFormatter;
         $this->services = $services;
     }
 
     protected function write(LogRecord $record): void
     {
         try {
-            $formatted = $this->formatter->format(
+            $formatted = $this->customFormatter->format(
                 strtolower($record->level->name),
                 $record->message,
                 $record->context
@@ -39,7 +39,6 @@ class MultiChannelHandler extends AbstractProcessingHandler
                 }
             }
         } catch (\Throwable $e) {
-            // Fallback para log de arquivo em caso de erro
             $this->logError('Error in MultiChannelHandler: ' . $e->getMessage());
         }
     }
