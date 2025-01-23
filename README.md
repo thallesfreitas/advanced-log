@@ -69,39 +69,137 @@ LOGGER_ENABLE_DATADOG=true
 ### Basic Logging
 
 ```php
-use Tfo\AdvancedLog\Facades\Log;
 
-// Simple message
-Log::log('info', 'User logged in successfully');
+use Illuminate\Support\Facades\Log;
 
-// With context
-Log::log('info', 'New order created', [
-    'order_id' => $order->id,
-    'amount' => $order->amount,
-    'customer' => $order->customer->email
+Log::emergency('Emergency log test', ['context' => 'test']);
+Log::alert('Alert log test', ['context' => 'test']);
+Log::critical('Critical log test', ['context' => 'test']);
+Log::error('Error log test', ['context' => 'test']);
+Log::warning('Warning log test', ['context' => 'test']);
+Log::notice('Notice log test', ['context' => 'test']);
+Log::info('Info log test', ['context' => 'test']);
+Log::debug('Debug log test', ['context' => 'test']);
+
+```
+
+### Advanced Logging
+
+```php
+use Tfo\AdvancedLog\Support\ALog;
+```
+
+### Performance Logging
+
+
+```php
+$startTime = microtime(true);
+// Your code here
+$duration = (microtime(true) - $startTime) * 1000;
+ALog::performance('Process Order', $duration, [
+    'order_id' => 123
 ]);
 ```
 
-### Error Logging
+### Audit Logging
 
 ```php
-try {
-    // Your code
-} catch (\Exception $e) {
-    Log::log('error', 'Payment processing failed', [
-        'exception' => $e,
-        'order_id' => $order->id
-    ]);
-}
+ALog::audit('update', 'User', 1, [
+    'name' => ['old' => 'John', 'new' => 'Johnny'],
+    'email' => ['old' => 'john@example.com', 'new' => 'johnny@example.com']
+]);
 ```
 
-### Custom Formatting
+### Security Logging
 
 ```php
-Log::log('warning', 'High server load detected', [
-    'cpu_usage' => '90%',
-    'memory_usage' => '85%',
-    'timestamp' => now()
+ALog::security('Login Failed', [
+    'email' => 'user@example.com',
+    'attempts' => 3
+]);
+```
+
+### API Logging
+
+```php
+$response = response()->json(['status' => 'success']);
+ALog::api('/api/users', 'GET', $response, 150.5);
+```
+
+### Database Logging
+
+```php
+ALog::database('create', 'users', 1, [
+    'data' => ['name' => 'John', 'email' => 'john@example.com']
+]);
+```
+
+### Job Logging
+
+```php
+ALog::job('SendWelcomeEmail', 'completed', [
+    'user_id' => 1,
+    'duration' => 1500
+]);
+```
+
+### Cache Logging
+
+```php
+ALog::cache('hit', 'user:123', [
+    'ttl' => 3600
+]);
+```
+
+### Request Logging
+
+```php
+ALog::request('API Request', [
+    'endpoint' => '/api/users',
+    'params' => ['page' => 1]
+]);
+```
+
+### Payment Logging
+
+```php
+ALog::payment('success', 99.99, 'stripe', [
+    'transaction_id' => 'tx_123'
+]);
+```
+
+### Notification Logging
+
+```php
+ALog::notification('email', 'user@example.com', 'welcome', [
+    'template' => 'welcome-email'
+]);
+```
+
+### File Logging
+
+```php
+ALog::file('upload', 'images/profile.jpg', [
+    'size' => '2.5MB',
+    'type' => 'image/jpeg'
+]);
+```
+
+### Auth Logging
+
+```php
+ALog::auth('login_success', [
+    'remember' => true,
+    'device' => 'iPhone 13'
+]);
+```
+
+### Export Logging
+
+```php
+ALog::export('users', 1000, [
+    'format' => 'csv',
+    'filters' => ['status' => 'active']
 ]);
 ```
 
