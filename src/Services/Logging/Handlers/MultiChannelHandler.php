@@ -6,39 +6,34 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Tfo\AdvancedLog\Contracts\LogFormatterInterface;
 use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
+use Tfo\AdvancedLog\Support\LogFacade;
 
 class MultiChannelHandler extends AbstractProcessingHandler
 {
     protected LogFormatterInterface $customFormatter;
     private array $services;
 
-    public function __construct(
-        LogFormatterInterface $formatter,
-        array $services,
-        $level = \Monolog\Level::Debug,
-        bool $bubble = true
-    ) {
-        parent::__construct($level, $bubble);
+    public function __construct(LogFormatterInterface $formatter, array $services)
+    {
+        parent::__construct();
         $this->customFormatter = $formatter;
         $this->services = $services;
     }
-
     protected function write(LogRecord $record): void
     {
-        try {
-            $formatted = $this->customFormatter->format(
-                strtolower($record->level->name),
-                $record->message,
-                $record->context
-            );
+        if (method_exists(LogFacade::class, $record->channel)) {
+            LogFacade::{$record->channel}($record->message, $record->context);
+            return;
+        }
 
-            foreach ($this->services as $service) {
-                if ($service instanceof NotificationServiceInterface) {
-                    $service->send($formatted['message'], $formatted['attachment']);
-                }
-            }
-        } catch (\Throwable $e) {
-            $this->logError('Error in MultiChannelHandler: ' . $e->getMessage());
+        $formatted = $this->customFormatter->format(
+            strtolower($record->level->name),
+            $record->message,
+            $record->context
+        );
+
+        foreach ($this->services as $service) {
+            $service->send($formatted['message'], $formatted['attachment']);
         }
     }
 
