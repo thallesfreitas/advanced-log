@@ -30,22 +30,23 @@ class LoggingServiceProvider extends ServiceProvider
             ));
             return $log;
         });
-
-
-
-    }
-
-    public function boot(): void
-    {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
-            ], 'advanced-logger-config');
-        }
+        $this->registerMacros();
 
         $this->app->register(RouteServiceProvider::class);
-        $this->registerMacros();
+
     }
+
+    // public function boot(): void
+    // {
+    //     if ($this->app->runningInConsole()) {
+    //         $this->publishes([
+    //             __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
+    //         ], 'advanced-logger-config');
+    //     }
+
+    //     $this->app->register(RouteServiceProvider::class);
+    //     $this->registerMacros();
+    // }
 
     private function getEnabledServices(): array
     {
