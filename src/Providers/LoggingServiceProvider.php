@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Log\Logger;
 use Monolog\Logger as MonologLogger;
+use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
+use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 
 class LoggingServiceProvider extends ServiceProvider
 {
