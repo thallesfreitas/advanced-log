@@ -6,8 +6,14 @@ use Illuminate\Log\LogManager;
 
 class CustomLogger extends LogManager
 {
+    public function __construct($app)
+    {
+        parent::__construct($app);
+    }
+
     protected function performance(string $operation, float $duration, array $context = [])
     {
+
         $threshold = config('advanced-logger.performance_threshold', 1000);
         if ($duration > $threshold) {
             return $this->warning("Performance Alert: {$operation}", array_merge($context, [
