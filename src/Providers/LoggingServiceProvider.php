@@ -4,21 +4,23 @@ namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;
-// use Illuminate\Log\Logger;
-// use Monolog\Logger as MonologLogger;
+use Illuminate\Log\Logger;
+use Monolog\Logger as MonologLogger;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
+use Illuminate\Support\Traits\Macroable;
 
 class LoggingServiceProvider extends ServiceProvider
 {
 
+    use Macroable;
     public function boot()
     {
         // Logs de Performance
-        Log::macro('performance', function (string $operation, float $duration, array $context = []) {
+        $this->macro('performance', function (string $operation, float $duration, array $context = []) {
             $threshold = config('logging.performance_threshold', 1000); // 1 segundo
 
             if ($duration > $threshold) {
@@ -33,7 +35,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Auditoria
-        Log::macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
+        $this->macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
             $context = [
                 'action' => $action,
                 'model' => $model,
@@ -48,7 +50,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Segurança
-        Log::macro('security', function (string $event, array $context = []) {
+        $this->macro('security', function (string $event, array $context = []) {
             $context = array_merge($context, [
                 'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),
@@ -61,7 +63,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de API
-        Log::macro('api', function (string $endpoint, string $method, mixed $response, float $duration = null) {
+        $this->macro('api', function (string $endpoint, string $method, mixed $response, float $duration = null) {
             $context = [
                 'endpoint' => $endpoint,
                 'method' => $method,
@@ -74,7 +76,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Banco de Dados
-        Log::macro('database', function (string $operation, string $table, mixed $id = null, array $context = []) {
+        $this->macro('database', function (string $operation, string $table, mixed $id = null, array $context = []) {
             $context = array_merge($context, [
                 'operation' => $operation,
                 'table' => $table,
@@ -86,7 +88,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Exceção Detalhada
-        Log::macro('exception', function (Throwable $exception, string $context = 'system') {
+        $this->macro('exception', function (Throwable $exception, string $context = 'system') {
             $context = [
                 'type' => get_class($exception),
                 'code' => $exception->getCode(),
@@ -103,7 +105,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Job
-        Log::macro('job', function (string $job, string $status, array $context = []) {
+        $this->macro('job', function (string $job, string $status, array $context = []) {
             $context = array_merge($context, [
                 'job' => $job,
                 'status' => $status,
@@ -116,7 +118,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Cache
-        Log::macro('cache', function (string $action, string $key, array $context = []) {
+        $this->macro('cache', function (string $action, string $key, array $context = []) {
             $context = array_merge($context, [
                 'action' => $action,
                 'key' => $key,
@@ -127,7 +129,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Notificação
-        Log::macro('notification', function (string $notification, string $channel, string $recipient, array $context = []) {
+        $this->macro('notification', function (string $notification, string $channel, string $recipient, array $context = []) {
             $context = array_merge($context, [
                 'notification' => $notification,
                 'channel' => $channel,
@@ -138,7 +140,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
         // Logs de Requisição
-        Log::macro('request', function (string $message, array $context = []) {
+        $this->macro('request', function (string $message, array $context = []) {
             $context = array_merge($context, [
                 'method' => request()->method(),
                 'url' => request()->fullUrl(),
