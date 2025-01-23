@@ -9,7 +9,7 @@ use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
 
 class MultiChannelHandler extends AbstractProcessingHandler
 {
-    private LogFormatterInterface $formatter;
+    protected LogFormatterInterface $formatter;
     private array $services;
 
     public function __construct(
