@@ -10,11 +10,18 @@ use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
+use VendorName\PackageName\Console\InstallCommand;
 
 class LoggingServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InstallCommand::class,
+            ]);
+        }
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/advanced-logger.php',
             'advanced-logger'

@@ -3,6 +3,7 @@
 namespace VendorName\PackageName\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class InstallCommand extends Command
 {
@@ -18,6 +19,8 @@ class InstallCommand extends Command
         ]);
 
         $this->updateEnvironmentFile();
+
+        $this->publishRoutes();
 
         $this->info('Advanced Logger installed successfully.');
         $this->info('Please update your .env file with your service credentials.');
@@ -46,5 +49,15 @@ class InstallCommand extends Command
                 }
             }
         }
+    }
+
+    private function publishRoutes()
+    {
+        $routesPath = base_path('routes/web.php');
+        $routesContent = File::get(__DIR__ . '/../../routes/test_routes.php');
+
+        File::append($routesPath, $routesContent);
+
+        $this->info('Routes published successfully.');
     }
 }
