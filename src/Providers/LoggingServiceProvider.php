@@ -22,20 +22,18 @@ class LoggingServiceProvider extends ServiceProvider
             'advanced-logger'
         );
 
-        // Estende o LogManager do Laravel
-        $this->app->extend('log', function ($log) {
-            $monolog = $log->getLogger();
+        $this->registerMacros();
 
-            // Adiciona nosso handler customizado ao Monolog
+        $this->app->extend('log', function ($log) {
+            $monolog = $log->driver()->getLogger();
             $monolog->pushHandler(new MultiChannelHandler(
                 new SlackFormatter(),
                 $this->getEnabledServices()
             ));
-
             return $log;
         });
 
-        $this->registerMacros();
+
 
     }
 
@@ -72,16 +70,13 @@ class LoggingServiceProvider extends ServiceProvider
 
         // Logs de Performance
         Log::macro('performance', function (string $operation, float $duration, array $context = []) {
-            $threshold = config('logging.performance_threshold', 1000); // 1 segundo
+            $threshold = config('advanced-logger.performance_threshold', 1000);
 
             if ($duration > $threshold) {
-                $context = array_merge($context, [
+                Log::warning("Performance Alert: {$operation}", array_merge($context, [
                     'duration' => round($duration, 2) . 'ms',
                     'threshold' => $threshold . 'ms',
-                    'exceeded_by' => round($duration - $threshold, 2) . 'ms'
-                ]);
-
-                Log::channel('custom')->warning("Performance Alert: {$operation}", $context);
+                ]));
             }
         });
 
