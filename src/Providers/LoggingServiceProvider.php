@@ -4,8 +4,8 @@ namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Log\Logger;
-use Monolog\Logger as MonologLogger;
+// use Illuminate\Log\Logger;
+// use Monolog\Logger as MonologLogger;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
@@ -36,7 +36,7 @@ class LoggingServiceProvider extends ServiceProvider
             $threshold = config('advanced-logger.performance_threshold', 1000);
 
             if ($duration > $threshold) {
-                $this->warning("Performance Alert: {$operation}", array_merge($context, [
+                Log::channel('custom')->warning("Performance Alert: {$operation}", array_merge($context, [
                     'duration' => round($duration, 2) . 'ms',
                     'threshold' => $threshold . 'ms',
                 ]));
@@ -45,7 +45,7 @@ class LoggingServiceProvider extends ServiceProvider
 
 
         Log::macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
-            $this->info("Audit: {$action} on {$model} #{$id}", [
+            Log::channel('custom')->info("Audit: {$action} on {$model} #{$id}", [
                 'action' => $action,
                 'model' => $model,
                 'id' => $id,
