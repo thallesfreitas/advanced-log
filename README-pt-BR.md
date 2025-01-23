@@ -150,7 +150,7 @@ Veja [CONTRIBUTING.md](CONTRIBUTING-pt-BR.md) para detalhes.
 
 ## Segurança
 
-Se você descobrir algum problema relacionado à segurança, por favor envie um e-mail para your@email.com em vez de usar o issue tracker.
+Se você descobrir algum problema relacionado à segurança, por favor envie um e-mail para thallesfreitas@yahoo.com.br em vez de usar o issue tracker.
 
 ## Créditos
 
