@@ -2,7 +2,7 @@
 
 namespace Tfo\AdvancedLog\Contracts;
 
-interface LogFormatterInterface
+interface LogFormatterInterface extends \Monolog\Formatter\FormatterInterface
 {
     public function format(string $level, string $message, array $context = []): array;
 
