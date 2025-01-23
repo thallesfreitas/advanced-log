@@ -53,4 +53,24 @@ class LoggingServiceProvider extends ServiceProvider
             ]);
         });
     }
+
+    private function getEnabledServices(): array
+    {
+        $services = [];
+
+        if (config('advanced-logger.services.slack')) {
+            $services[] = new SlackNotificationService();
+        }
+
+        if (config('advanced-logger.services.sentry')) {
+            $services[] = new SentryNotificationService();
+        }
+
+        if (config('advanced-logger.services.datadog')) {
+            $services[] = new DataDogNotificationService();
+        }
+
+        return $services;
+    }
+
 }
