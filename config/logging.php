@@ -4,13 +4,12 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single', 'custom'],
+            'channels' => ['advanced'],
             'ignore_exceptions' => false,
         ],
 
-        'custom' => [
-            'driver' => 'custom',
-            'via' => Tfo\AdvancedLog\Services\Logging\CustomLogger::class,
+        'advanced' => [
+            'driver' => 'advanced'
         ],
-    ],
+    ]
 ];

@@ -5,34 +5,41 @@ namespace Tfo\AdvancedLog\Services\Logging\Handlers;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Tfo\AdvancedLog\Contracts\LogFormatterInterface;
-use Tfo\AdvancedLog\Support\LogFacade;
+use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
 
 class MultiChannelHandler extends AbstractProcessingHandler
 {
-    protected LogFormatterInterface $customFormatter;
+    private LogFormatterInterface $formatter;
     private array $services;
 
-    public function __construct(LogFormatterInterface $formatter, array $services)
-    {
-        parent::__construct();
-        $this->customFormatter = $formatter;
+    public function __construct(
+        LogFormatterInterface $formatter,
+        array $services,
+        $level = \Monolog\Level::Debug,
+        bool $bubble = true
+    ) {
+        parent::__construct($level, $bubble);
+        $this->formatter = $formatter;
         $this->services = $services;
     }
+
     protected function write(LogRecord $record): void
     {
-        if (method_exists(LogFacade::class, $record->channel)) {
-            LogFacade::{$record->channel}($record->message, $record->context);
-            return;
-        }
+        try {
+            $formatted = $this->formatter->format(
+                strtolower($record->level->name),
+                $record->message,
+                $record->context
+            );
 
-        $formatted = $this->customFormatter->format(
-            strtolower($record->level->name),
-            $record->message,
-            $record->context
-        );
-
-        foreach ($this->services as $service) {
-            $service->send($formatted['message'], $formatted['attachment']);
+            foreach ($this->services as $service) {
+                if ($service instanceof NotificationServiceInterface) {
+                    $service->send($formatted['message'], $formatted['attachment']);
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback para log de arquivo em caso de erro
+            $this->logError('Error in MultiChannelHandler: ' . $e->getMessage());
         }
     }
 
