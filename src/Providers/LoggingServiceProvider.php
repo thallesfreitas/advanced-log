@@ -32,7 +32,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
 
-        Logger::macro('performance', function (string $operation, float $duration, array $context = []) {
+        Log::macro('performance', function (string $operation, float $duration, array $context = []) {
             $threshold = config('advanced-logger.performance_threshold', 1000);
 
             if ($duration > $threshold) {
@@ -44,7 +44,7 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
 
-        Logger::macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
+        Log::macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
             $this->info("Audit: {$action} on {$model} #{$id}", [
                 'action' => $action,
                 'model' => $model,
