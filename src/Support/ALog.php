@@ -1,6 +1,6 @@
 <?php
 
-namespace Tfo\AdvancedLog\Facades;
+namespace Tfo\AdvancedLog\Support;
 
 use Illuminate\Support\Facades\Facade;
 
