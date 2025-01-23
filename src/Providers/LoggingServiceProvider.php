@@ -2,18 +2,17 @@
 
 namespace Tfo\AdvancedLog\Providers;
 
-use App\Logging\CustomLogger;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Log\Logger;
-use Monolog\Logger as MonologLogger;
+// use Illuminate\Support\Facades\Log;
+// use Illuminate\Log\Logger;
+// use Monolog\Logger as MonologLogger;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
-use Illuminate\Support\Traits\Macroable;
-
+// use Illuminate\Support\Traits\Macroable;
+use Tfo\AdvancedLog\Services\Logging\CustomLogger;
 class LoggingServiceProvider extends ServiceProvider
 {
 
