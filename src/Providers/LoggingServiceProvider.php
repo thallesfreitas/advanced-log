@@ -15,14 +15,12 @@ class LoggingServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->register(RouteServiceProvider::class);
 
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/advanced-logger.php',
             'advanced-logger'
         );
 
-        $this->registerMacros();
 
         $this->app->extend('log', function ($log) {
             $monolog = $log->driver()->getLogger();
@@ -44,6 +42,9 @@ class LoggingServiceProvider extends ServiceProvider
                 __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
             ], 'advanced-logger-config');
         }
+
+        $this->app->register(RouteServiceProvider::class);
+        $this->registerMacros();
     }
 
     private function getEnabledServices(): array
