@@ -93,7 +93,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'user_agent' => request()->userAgent()
             ];
 
-            Log::channel('custom')->info("Audit: {$action} on {$model} #{$id}", $context);
+            $this->info("Audit: {$action} on {$model} #{$id}", $context);
         });
 
         // Logs de Segurança
@@ -106,7 +106,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'method' => request()->method(),
             ]);
 
-            Log::channel('custom')->warning("Security: {$event}", $context);
+            $this->warning("Security: {$event}", $context);
         });
 
         // Logs de API
@@ -119,7 +119,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'user' => auth()->user()?->email ?? 'guest',
             ];
 
-            Log::channel('custom')->info("API {$method}: {$endpoint}", $context);
+            $this->info("API {$method}: {$endpoint}", $context);
         });
 
         // Logs de Banco de Dados
@@ -131,7 +131,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'connection' => config('database.default'),
             ]);
 
-            Log::channel('custom')->info("DB {$operation}: {$table}", $context);
+            $this->info("DB {$operation}: {$table}", $context);
         });
 
         // Logs de Exceção Detalhada
@@ -148,7 +148,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'user' => auth()->user()?->email ?? 'guest',
             ];
 
-            Log::channel('custom')->error($exception->getMessage(), $context);
+            $this->error($exception->getMessage(), $context);
         });
 
         // Logs de Job
@@ -161,7 +161,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'duration' => $context['duration'] ?? null,
             ]);
 
-            Log::channel('custom')->info("Job {$status}: {$job}", $context);
+            $this->info("Job {$status}: {$job}", $context);
         });
 
         // Logs de Cache
@@ -172,7 +172,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'store' => config('cache.default'),
             ]);
 
-            Log::channel('custom')->debug("Cache {$action}: {$key}", $context);
+            $this->debug("Cache {$action}: {$key}", $context);
         });
 
         // Logs de Notificação
@@ -183,7 +183,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'recipient' => $recipient,
             ]);
 
-            Log::channel('custom')->info("Notification sent: {$notification}", $context);
+            $this->info("Notification sent: {$notification}", $context);
         });
 
         // Logs de Requisição
@@ -197,7 +197,7 @@ class LoggingServiceProvider extends ServiceProvider
                 'inputs' => request()->except(['password', 'password_confirmation']),
             ]);
 
-            Log::channel('custom')->info("Request: {$message}", $context);
+            $this->info("Request: {$message}", $context);
         });
     }
 }
