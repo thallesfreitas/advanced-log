@@ -32,29 +32,29 @@ class LoggingServiceProvider extends ServiceProvider
         });
 
 
-        Log::macro('performance', function (string $operation, float $duration, array $context = []) {
-            $threshold = config('advanced-logger.performance_threshold', 1000);
+        // Log::macro('performance', function (string $operation, float $duration, array $context = []) {
+        //     $threshold = config('advanced-logger.performance_threshold', 1000);
 
-            if ($duration > $threshold) {
-                Log::channel('custom')->warning("Performance Alert: {$operation}", array_merge($context, [
-                    'duration' => round($duration, 2) . 'ms',
-                    'threshold' => $threshold . 'ms',
-                ]));
-            }
-        });
+        //     if ($duration > $threshold) {
+        //         Log::channel('custom')->warning("Performance Alert: {$operation}", array_merge($context, [
+        //             'duration' => round($duration, 2) . 'ms',
+        //             'threshold' => $threshold . 'ms',
+        //         ]));
+        //     }
+        // });
 
 
-        Log::macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
-            Log::channel('custom')->info("Audit: {$action} on {$model} #{$id}", [
-                'action' => $action,
-                'model' => $model,
-                'id' => $id,
-                'changes' => $changes,
-                'user' => $user ?? auth()->user()?->email ?? 'system',
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent()
-            ]);
-        });
+        // Log::macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
+        //     Log::channel('custom')->info("Audit: {$action} on {$model} #{$id}", [
+        //         'action' => $action,
+        //         'model' => $model,
+        //         'id' => $id,
+        //         'changes' => $changes,
+        //         'user' => $user ?? auth()->user()?->email ?? 'system',
+        //         'ip' => request()->ip(),
+        //         'user_agent' => request()->userAgent()
+        //     ]);
+        // });
     }
 
     private function getEnabledServices(): array
