@@ -1,140 +1,140 @@
-# README-pt-BR.md
+# README.md
 
-# Advanced Logger para Laravel
+# Advanced Logger for Laravel
 
-[Read in English](README.md)
+[Leia em Português](README-pt-BR.md)
 
-Sistema avançado de logs para aplicações Laravel com suporte integrado para Slack, Sentry e DataDog.
+Advanced logging system for Laravel applications with integrated support for Slack, Sentry, and DataDog.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tfo/advanced-log.svg?style=flat-square)](https://packagist.org/packages/tfo/advanced-log)
 [![Total Downloads](https://img.shields.io/packagist/dt/tfo/advanced-log.svg?style=flat-square)](https://packagist.org/packages/tfo/advanced-log)
 [![License](https://img.shields.io/packagist/l/tfo/advanced-log.svg?style=flat-square)](LICENSE.md)
 
-## Funcionalidades
+## Features
 
-- 🚀 API simples e intuitiva
-- 📱 Notificações em tempo real no Slack
-- 🔍 Integração com rastreamento de erros do Sentry
-- 📊 Suporte a métricas do DataDog
-- 🎨 Formatação personalizável de mensagens
-- ⚡ Múltiplos canais de notificação
-- 🔒 Tratamento seguro de credenciais
-- 🛠 Configuração simplificada
+- 🚀 Simple and intuitive API
+- 📱 Real-time Slack notifications
+- 🔍 Sentry error tracking integration
+- 📊 DataDog metrics support
+- 🎨 Customizable message formatting
+- ⚡ Multiple notification channels
+- 🔒 Secure credentials handling
+- 🛠 Simplified configuration
 
-## Requisitos
+## Requirements
 
 - PHP ^8.1
 - Laravel ^10.0
 
-## Instalação
+## Installation
 
-Você pode instalar o pacote via composer:
+You can install the package via composer:
 
 ```bash
 composer require tfo/advanced-log
 ```
 
-## Configuração
+## Configuration
 
-1. Publique o arquivo de configuração:
+1. Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag=advanced-logger-config
 ```
 
-2. Adicione estas variáveis ao seu arquivo `.env`:
+2. Add these variables to your `.env` file:
 
 ```env
-# Configuração do Slack
-LOGGER_SLACK_WEBHOOK_URL=sua-webhook-url
-LOGGER_SLACK_CHANNEL=#seu-canal
+# Slack Configuration
+LOGGER_SLACK_WEBHOOK_URL=your-webhook-url
+LOGGER_SLACK_CHANNEL=#your-channel
 LOGGER_SLACK_USERNAME=Logger Bot
 
-# Configuração do Sentry
-LOGGER_SENTRY_DSN=seu-sentry-dsn
+# Sentry Configuration
+LOGGER_SENTRY_DSN=your-sentry-dsn
 
-# Configuração do DataDog
-LOGGER_DATADOG_API_KEY=sua-api-key
-LOGGER_DATADOG_APP_KEY=sua-app-key
-LOGGER_DATADOG_SERVICE=nome-do-seu-servico
+# DataDog Configuration
+LOGGER_DATADOG_API_KEY=your-api-key
+LOGGER_DATADOG_APP_KEY=your-app-key
+LOGGER_DATADOG_SERVICE=your-service-name
 
-# Habilitar/Desabilitar Serviços
+# Enable/Disable Services
 LOGGER_ENABLE_SLACK=true
 LOGGER_ENABLE_SENTRY=true
 LOGGER_ENABLE_DATADOG=true
 ```
 
-## Uso
+## Usage
 
-### Logs Básicos
+### Basic Logging
 
 ```php
 use Tfo\AdvancedLog\Facades\Log;
 
-// Mensagem simples
-Log::log('info', 'Usuário logado com sucesso');
+// Simple message
+Log::log('info', 'User logged in successfully');
 
-// Com contexto
-Log::log('info', 'Novo pedido criado', [
-    'pedido_id' => $pedido->id,
-    'valor' => $pedido->valor,
-    'cliente' => $pedido->cliente->email
+// With context
+Log::log('info', 'New order created', [
+    'order_id' => $order->id,
+    'amount' => $order->amount,
+    'customer' => $order->customer->email
 ]);
 ```
 
-### Logs de Erro
+### Error Logging
 
 ```php
 try {
-    // Seu código
+    // Your code
 } catch (\Exception $e) {
-    Log::log('error', 'Falha no processamento do pagamento', [
+    Log::log('error', 'Payment processing failed', [
         'exception' => $e,
-        'pedido_id' => $pedido->id
+        'order_id' => $order->id
     ]);
 }
 ```
 
-### Formatação Personalizada
+### Custom Formatting
 
 ```php
-Log::log('warning', 'Alta carga no servidor detectada', [
-    'uso_cpu' => '90%',
-    'uso_memoria' => '85%',
+Log::log('warning', 'High server load detected', [
+    'cpu_usage' => '90%',
+    'memory_usage' => '85%',
     'timestamp' => now()
 ]);
 ```
 
-## Canais
+## Channels
 
 ### Slack
 
-Mensagens são enviadas para o Slack com:
+Messages are sent to Slack with:
 
-- Emojis indicando o nível do log
-- Mensagens com código de cores
-- Campos estruturados para contexto
-- Suporte a canais personalizados
+- Emojis indicating log level
+- Color-coded messages
+- Structured context fields
+- Custom channel support
 
 ### Sentry
 
-Erros são rastreados no Sentry com:
+Errors are tracked in Sentry with:
 
-- Stack traces completos
-- Informações do ambiente
-- Contexto do usuário
-- Tags e breadcrumbs personalizados
+- Full stack traces
+- Environment information
+- User context
+- Custom tags and breadcrumbs
 
 ### DataDog
 
-Métricas são enviadas para o DataDog com:
+Metrics are sent to DataDog with:
 
-- Métricas personalizadas
-- Tags
-- Agregação de eventos
-- Rastreamento de performance
+- Custom metrics
+- Tagging
+- Event aggregation
+- Performance tracking
 
-## Testes
+## Testing
 
 ```bash
 composer test
@@ -142,21 +142,21 @@ composer test
 
 ## Changelog
 
-Veja [CHANGELOG.md](CHANGELOG.md) para mais informações sobre mudanças recentes.
+See [CHANGELOG.md](CHANGELOG.md) for more information about recent changes.
 
-## Contribuindo
+## Contributing
 
-Veja [CONTRIBUTING.md](CONTRIBUTING.md) para detalhes.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## Segurança
+## Security
 
-Se você descobrir algum problema relacionado à segurança, por favor envie um e-mail para your@email.com em vez de usar o issue tracker.
+If you discover any security-related issues, please email thallesfreitas@gmail.com instead of using the issue tracker.
 
-## Créditos
+## Credits
 
 - [Thalles Freitas](https://github.com/thallesfreitas)
-- [Todos os Contribuidores](../../contributors)
+- [All Contributors](../../contributors)
 
-## Licença
+## License
 
-The MIT License (MIT). Veja [License File](LICENSE.md) para mais informações.
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
