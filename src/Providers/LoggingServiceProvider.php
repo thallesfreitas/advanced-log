@@ -3,8 +3,9 @@
 namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Tfo\AdvancedLog\Contracts\LoggerInterface;
-use Tfo\AdvancedLog\Services\Logging\Logger;
+use Illuminate\Support\Facades\Log;
+use Monolog\Logger as MonologLogger;
+use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
@@ -19,13 +20,17 @@ class LoggingServiceProvider extends ServiceProvider
             'advanced-logger'
         );
 
-        $this->app->singleton(LoggerInterface::class, function ($app) {
-            $services = $this->getEnabledServices();
+        // Estende o LogManager do Laravel
+        $this->app->extend('log', function ($log) {
+            $monolog = $log->getLogger();
 
-            return new Logger(
+            // Adiciona nosso handler customizado ao Monolog
+            $monolog->pushHandler(new MultiChannelHandler(
                 new SlackFormatter(),
-                $services
-            );
+                $this->getEnabledServices()
+            ));
+
+            return $log;
         });
     }
 
