@@ -6,10 +6,13 @@ use Illuminate\Support\Facades\Log as BaseFacade;
 
 class LogFacade extends BaseFacade
 {
-
-    protected static function getFacadeAccessor()
+    public static function __callStatic($name, $arguments)
     {
-        return 'log';
+        if (method_exists(static::class, $name)) {
+            return (new static)->$name(...$arguments);
+        }
+
+        return Log::$name(...$arguments);
     }
 
     public static function audit(string $action, string $model, mixed $id, array $changes = [], ?string $user = null)
@@ -128,8 +131,5 @@ class LogFacade extends BaseFacade
         ]));
     }
 
-    protected static function getFacadeAccessor()
-    {
-        return 'log';
-    }
+
 }

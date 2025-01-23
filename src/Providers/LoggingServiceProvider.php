@@ -28,8 +28,6 @@ class LoggingServiceProvider extends ServiceProvider
             ));
             return $log;
         });
-
-        class_alias(LogFacade::class, 'Log');
     }
 
     private function getEnabledServices(): array
