@@ -13,12 +13,10 @@ class InstallCommand extends Command
     {
         $this->info('Installing Advanced Logger...');
 
-        // Publica configurações
         $this->call('vendor:publish', [
             '--tag' => 'advanced-logger-config'
         ]);
 
-        // Adiciona variáveis ao .env se não existirem
         $this->updateEnvironmentFile();
 
         $this->info('Advanced Logger installed successfully.');

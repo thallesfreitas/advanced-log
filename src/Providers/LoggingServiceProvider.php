@@ -32,6 +32,10 @@ class LoggingServiceProvider extends ServiceProvider
 
             return $log;
         });
+
+        $this->app->singleton('advanced-log', function ($app) {
+            return $app['log'];
+        });
     }
 
     public function boot(): void
