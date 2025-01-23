@@ -19,5 +19,8 @@ class TestCase extends Orchestra
         $app['config']->set('advanced-logger.slack.webhook_url', 'https://hooks.slack.com/services/TEST');
         $app['config']->set('advanced-logger.slack.channel', '#test');
         $app['config']->set('advanced-logger.services.slack', true);
+        $app['config']->set('advanced-logger.services.sentry', false);
+        $app['config']->set('advanced-logger.services.datadog', false);
+        $app['config']->set('advanced-logger.performance_threshold', 1000);
     }
 }
