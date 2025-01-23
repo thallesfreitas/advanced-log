@@ -8,6 +8,9 @@ use Illuminate\Log\Logger;
 use Monolog\Logger as MonologLogger;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
+use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
+use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
+use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
 
 class LoggingServiceProvider extends ServiceProvider
 {
