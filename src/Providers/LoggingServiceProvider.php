@@ -158,6 +158,7 @@ class LoggingServiceProvider extends ServiceProvider
             return new CustomLogger($app);
         });
 
+
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/advanced-logger.php',
             'advanced-logger'
