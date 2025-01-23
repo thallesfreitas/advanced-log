@@ -2,6 +2,7 @@
 
 namespace Tfo\AdvancedLog\Providers;
 
+use App\Logging\CustomLogger;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Log\Logger;
@@ -16,146 +17,151 @@ use Illuminate\Support\Traits\Macroable;
 class LoggingServiceProvider extends ServiceProvider
 {
 
-    use Macroable;
-    public function boot()
-    {
-        // Logs de Performance
-        $this->macro('performance', function (string $operation, float $duration, array $context = []) {
-            $threshold = config('logging.performance_threshold', 1000); // 1 segundo
+    // use Macroable;
+    // public function boot()
+    // {
+    //     // Logs de Performance
+    //     $this->macro('performance', function (string $operation, float $duration, array $context = []) {
+    //         $threshold = config('logging.performance_threshold', 1000); // 1 segundo
 
-            if ($duration > $threshold) {
-                $context = array_merge($context, [
-                    'duration' => round($duration, 2) . 'ms',
-                    'threshold' => $threshold . 'ms',
-                    'exceeded_by' => round($duration - $threshold, 2) . 'ms'
-                ]);
+    //         if ($duration > $threshold) {
+    //             $context = array_merge($context, [
+    //                 'duration' => round($duration, 2) . 'ms',
+    //                 'threshold' => $threshold . 'ms',
+    //                 'exceeded_by' => round($duration - $threshold, 2) . 'ms'
+    //             ]);
 
-                Log::channel('custom')->warning("Performance Alert: {$operation}", $context);
-            }
-        });
+    //             Log::channel('custom')->warning("Performance Alert: {$operation}", $context);
+    //         }
+    //     });
 
-        // Logs de Auditoria
-        $this->macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
-            $context = [
-                'action' => $action,
-                'model' => $model,
-                'id' => $id,
-                'changes' => $changes,
-                'user' => $user ?? auth()->user()?->email ?? 'system',
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent()
-            ];
+    //     // Logs de Auditoria
+    //     $this->macro('audit', function (string $action, string $model, mixed $id, array $changes = [], ?string $user = null) {
+    //         $context = [
+    //             'action' => $action,
+    //             'model' => $model,
+    //             'id' => $id,
+    //             'changes' => $changes,
+    //             'user' => $user ?? auth()->user()?->email ?? 'system',
+    //             'ip' => request()->ip(),
+    //             'user_agent' => request()->userAgent()
+    //         ];
 
-            Log::channel('custom')->info("Audit: {$action} on {$model} #{$id}", $context);
-        });
+    //         Log::channel('custom')->info("Audit: {$action} on {$model} #{$id}", $context);
+    //     });
 
-        // Logs de Segurança
-        $this->macro('security', function (string $event, array $context = []) {
-            $context = array_merge($context, [
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'user' => auth()->user()?->email ?? 'guest',
-                'url' => request()->fullUrl(),
-                'method' => request()->method(),
-            ]);
+    //     // Logs de Segurança
+    //     $this->macro('security', function (string $event, array $context = []) {
+    //         $context = array_merge($context, [
+    //             'ip' => request()->ip(),
+    //             'user_agent' => request()->userAgent(),
+    //             'user' => auth()->user()?->email ?? 'guest',
+    //             'url' => request()->fullUrl(),
+    //             'method' => request()->method(),
+    //         ]);
 
-            Log::channel('custom')->warning("Security: {$event}", $context);
-        });
+    //         Log::channel('custom')->warning("Security: {$event}", $context);
+    //     });
 
-        // Logs de API
-        $this->macro('api', function (string $endpoint, string $method, mixed $response, float $duration = null) {
-            $context = [
-                'endpoint' => $endpoint,
-                'method' => $method,
-                'response_code' => $response instanceof \Illuminate\Http\Response ? $response->status() : null,
-                'duration' => $duration ? round($duration, 2) . 'ms' : null,
-                'user' => auth()->user()?->email ?? 'guest',
-            ];
+    //     // Logs de API
+    //     $this->macro('api', function (string $endpoint, string $method, mixed $response, float $duration = null) {
+    //         $context = [
+    //             'endpoint' => $endpoint,
+    //             'method' => $method,
+    //             'response_code' => $response instanceof \Illuminate\Http\Response ? $response->status() : null,
+    //             'duration' => $duration ? round($duration, 2) . 'ms' : null,
+    //             'user' => auth()->user()?->email ?? 'guest',
+    //         ];
 
-            Log::channel('custom')->info("API {$method}: {$endpoint}", $context);
-        });
+    //         Log::channel('custom')->info("API {$method}: {$endpoint}", $context);
+    //     });
 
-        // Logs de Banco de Dados
-        $this->macro('database', function (string $operation, string $table, mixed $id = null, array $context = []) {
-            $context = array_merge($context, [
-                'operation' => $operation,
-                'table' => $table,
-                'record_id' => $id,
-                'connection' => config('database.default'),
-            ]);
+    //     // Logs de Banco de Dados
+    //     $this->macro('database', function (string $operation, string $table, mixed $id = null, array $context = []) {
+    //         $context = array_merge($context, [
+    //             'operation' => $operation,
+    //             'table' => $table,
+    //             'record_id' => $id,
+    //             'connection' => config('database.default'),
+    //         ]);
 
-            Log::channel('custom')->info("DB {$operation}: {$table}", $context);
-        });
+    //         Log::channel('custom')->info("DB {$operation}: {$table}", $context);
+    //     });
 
-        // Logs de Exceção Detalhada
-        $this->macro('exception', function (Throwable $exception, string $context = 'system') {
-            $context = [
-                'type' => get_class($exception),
-                'code' => $exception->getCode(),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => $exception->getTraceAsString(),
-                'previous' => $exception->getPrevious() ? get_class($exception->getPrevious()) : null,
-                'context' => $context,
-                'url' => request()->fullUrl(),
-                'user' => auth()->user()?->email ?? 'guest',
-            ];
+    //     // Logs de Exceção Detalhada
+    //     $this->macro('exception', function (Throwable $exception, string $context = 'system') {
+    //         $context = [
+    //             'type' => get_class($exception),
+    //             'code' => $exception->getCode(),
+    //             'file' => $exception->getFile(),
+    //             'line' => $exception->getLine(),
+    //             'trace' => $exception->getTraceAsString(),
+    //             'previous' => $exception->getPrevious() ? get_class($exception->getPrevious()) : null,
+    //             'context' => $context,
+    //             'url' => request()->fullUrl(),
+    //             'user' => auth()->user()?->email ?? 'guest',
+    //         ];
 
-            Log::channel('custom')->error($exception->getMessage(), $context);
-        });
+    //         Log::channel('custom')->error($exception->getMessage(), $context);
+    //     });
 
-        // Logs de Job
-        $this->macro('job', function (string $job, string $status, array $context = []) {
-            $context = array_merge($context, [
-                'job' => $job,
-                'status' => $status,
-                'queue' => $context['queue'] ?? 'default',
-                'attempt' => $context['attempt'] ?? 1,
-                'duration' => $context['duration'] ?? null,
-            ]);
+    //     // Logs de Job
+    //     $this->macro('job', function (string $job, string $status, array $context = []) {
+    //         $context = array_merge($context, [
+    //             'job' => $job,
+    //             'status' => $status,
+    //             'queue' => $context['queue'] ?? 'default',
+    //             'attempt' => $context['attempt'] ?? 1,
+    //             'duration' => $context['duration'] ?? null,
+    //         ]);
 
-            Log::channel('custom')->info("Job {$status}: {$job}", $context);
-        });
+    //         Log::channel('custom')->info("Job {$status}: {$job}", $context);
+    //     });
 
-        // Logs de Cache
-        $this->macro('cache', function (string $action, string $key, array $context = []) {
-            $context = array_merge($context, [
-                'action' => $action,
-                'key' => $key,
-                'store' => config('cache.default'),
-            ]);
+    //     // Logs de Cache
+    //     $this->macro('cache', function (string $action, string $key, array $context = []) {
+    //         $context = array_merge($context, [
+    //             'action' => $action,
+    //             'key' => $key,
+    //             'store' => config('cache.default'),
+    //         ]);
 
-            Log::channel('custom')->debug("Cache {$action}: {$key}", $context);
-        });
+    //         Log::channel('custom')->debug("Cache {$action}: {$key}", $context);
+    //     });
 
-        // Logs de Notificação
-        $this->macro('notification', function (string $notification, string $channel, string $recipient, array $context = []) {
-            $context = array_merge($context, [
-                'notification' => $notification,
-                'channel' => $channel,
-                'recipient' => $recipient,
-            ]);
+    //     // Logs de Notificação
+    //     $this->macro('notification', function (string $notification, string $channel, string $recipient, array $context = []) {
+    //         $context = array_merge($context, [
+    //             'notification' => $notification,
+    //             'channel' => $channel,
+    //             'recipient' => $recipient,
+    //         ]);
 
-            Log::channel('custom')->info("Notification sent: {$notification}", $context);
-        });
+    //         Log::channel('custom')->info("Notification sent: {$notification}", $context);
+    //     });
 
-        // Logs de Requisição
-        $this->macro('request', function (string $message, array $context = []) {
-            $context = array_merge($context, [
-                'method' => request()->method(),
-                'url' => request()->fullUrl(),
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'user' => auth()->user()?->email ?? 'guest',
-                'inputs' => request()->except(['password', 'password_confirmation']),
-            ]);
+    //     // Logs de Requisição
+    //     $this->macro('request', function (string $message, array $context = []) {
+    //         $context = array_merge($context, [
+    //             'method' => request()->method(),
+    //             'url' => request()->fullUrl(),
+    //             'ip' => request()->ip(),
+    //             'user_agent' => request()->userAgent(),
+    //             'user' => auth()->user()?->email ?? 'guest',
+    //             'inputs' => request()->except(['password', 'password_confirmation']),
+    //         ]);
 
-            Log::channel('custom')->info("Request: {$message}", $context);
-        });
-    }
+    //         Log::channel('custom')->info("Request: {$message}", $context);
+    //     });
+    // }
 
     public function register(): void
     {
+
+        $this->app->singleton('log', function ($app) {
+            return new CustomLogger($app);
+        });
+
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/advanced-logger.php',
             'advanced-logger'
