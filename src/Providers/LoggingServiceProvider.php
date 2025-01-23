@@ -3,12 +3,12 @@
 namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Tfo\AdvancedLog\Support\LogFacade;
+use Tfo\AdvancedLog\Contracts\LoggerInterface;
+use Tfo\AdvancedLog\Services\Logging\Logger;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
-use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
-use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
-use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
+use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
+use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
 
 class LoggingServiceProvider extends ServiceProvider
 {
@@ -19,15 +19,23 @@ class LoggingServiceProvider extends ServiceProvider
             'advanced-logger'
         );
 
-        $this->app->bind('log', function ($app) {
-            $log = new \Illuminate\Log\LogManager($app);
-            $monolog = $log->driver()->getLogger();
-            $monolog->pushHandler(new MultiChannelHandler(
+        $this->app->singleton(LoggerInterface::class, function ($app) {
+            $services = $this->getEnabledServices();
+
+            return new Logger(
                 new SlackFormatter(),
-                $this->getEnabledServices()
-            ));
-            return $log;
+                $services
+            );
         });
+    }
+
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
+            ], 'advanced-logger-config');
+        }
     }
 
     private function getEnabledServices(): array

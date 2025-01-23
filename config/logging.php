@@ -10,7 +10,7 @@ return [
 
         'custom' => [
             'driver' => 'custom',
-            'via' => Tfo\AdvancedLog\Services\Logging\CustomLoggerFactory::class,
+            'via' => Tfo\AdvancedLog\Services\Logging\CustomLogger::class,
         ],
     ],
 ];

@@ -15,4 +15,4 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(__DIR__ . '/../../routes/test.php');
         }
     }
-}`
+}

@@ -2,7 +2,8 @@
 
 namespace Tfo\AdvancedLog\Tests\Unit;
 
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
+use Tfo\AdvancedLog\Facades\AdvancedLog;
 use Tfo\AdvancedLog\Tests\TestCase;
 use Exception;
 
@@ -12,14 +13,14 @@ class LoggerTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        Log::emergency('Test emergency');
-        Log::alert('Test alert');
-        Log::critical('Test critical');
-        Log::error('Test error');
-        Log::warning('Test warning');
-        Log::notice('Test notice');
-        Log::info('Test info');
-        Log::debug('Test debug');
+        AdvancedLog::emergency('Test emergency');
+        AdvancedLog::alert('Test alert');
+        AdvancedLog::critical('Test critical');
+        AdvancedLog::error('Test error');
+        AdvancedLog::warning('Test warning');
+        AdvancedLog::notice('Test notice');
+        AdvancedLog::info('Test info');
+        AdvancedLog::debug('Test debug');
     }
 
     public function test_log_with_context()

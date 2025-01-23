@@ -23,4 +23,8 @@ return [
         'sentry' => env('LOGGER_ENABLE_SENTRY', true),
         'datadog' => env('LOGGER_ENABLE_DATADOG', true),
     ],
+
+    // Configurações gerais
+    'level' => env('LOGGER_LEVEL', 'debug'),
+    'environment' => env('LOGGER_ENV', env('APP_ENV')),
 ];
