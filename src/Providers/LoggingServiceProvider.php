@@ -6,9 +6,9 @@ use Illuminate\Support\ServiceProvider;
 use Tfo\AdvancedLog\Contracts\LoggerInterface;
 use Tfo\AdvancedLog\Services\Logging\Logger;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
-use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
-use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
+use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
+use Tfo\AdvancedLog\Services\Notifications\SlackNotificationService;
 
 class LoggingServiceProvider extends ServiceProvider
 {

@@ -5,7 +5,6 @@ namespace Tfo\AdvancedLog\Services\Logging\Handlers;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Tfo\AdvancedLog\Contracts\LogFormatterInterface;
-use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
 use Tfo\AdvancedLog\Support\LogFacade;
 
 class MultiChannelHandler extends AbstractProcessingHandler

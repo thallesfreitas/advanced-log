@@ -1,53 +1,26 @@
 <?php
 
-namespace Tfo\AdvancedLog\Services\Notifications;
+namespace Tfo\AdvancedLog\Services\Logging\Notifications;
 
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\SlackMessage;
+use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
+use Tfo\AdvancedLog\Models\SlackNotifier;
+use Tfo\AdvancedLog\Services\Notifications\SlackNotification;
 
-class SlackNotificationService extends Notification
+class SlackNotificationService implements NotificationServiceInterface
 {
-    private string $message;
-    private ?array $attachment;
+    private SlackNotifier $notifier;
 
-    public function __construct(string $message, ?array $attachment = null)
+    public function __construct()
     {
-        $this->message = $message;
-        $this->attachment = $attachment;
+        $this->notifier = new SlackNotifier();
     }
 
-    public function via($notifiable): array
+    public function send(string $message, array $attachment = null): void
     {
-        return ['slack'];
-    }
-
-    public function toSlack($notifiable): SlackMessage
-    {
-        $slack = (new SlackMessage)
-            ->from(config('advanced-logger.slack.username'))
-            ->to(config('advanced-logger.slack.channel'))
-            ->content($this->message);
-
-        if ($this->attachment) {
-            $slack->attachment(function ($attachment) {
-                if (isset($this->attachment['color'])) {
-                    $attachment->color($this->attachment['color']);
-                }
-
-                if (isset($this->attachment['fields'])) {
-                    $formattedFields = [];
-                    foreach ($this->attachment['fields'] as $field) {
-                        if (isset($field['title']) && isset($field['value'])) {
-                            $formattedFields[$field['title']] = $field['value'];
-                        }
-                    }
-                    if (!empty($formattedFields)) {
-                        $attachment->fields($formattedFields);
-                    }
-                }
-            });
+        if (!config('advanced-logger.services.slack')) {
+            return;
         }
 
-        return $slack;
+        $this->notifier->notify(new SlackNotification($message, $attachment));
     }
 }
