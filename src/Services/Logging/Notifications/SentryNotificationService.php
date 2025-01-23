@@ -7,7 +7,7 @@ use Sentry\State\Scope;
 
 class SentryNotificationService implements NotificationServiceInterface
 {
-    public function send(string $message, array $attachment = null): void
+    public function send(string $message, ?array $attachment = null): void
     {
         if (!config('advanced-logger.services.sentry') || !config('advanced-logger.sentry.dsn')) {
             return;

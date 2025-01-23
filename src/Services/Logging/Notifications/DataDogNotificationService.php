@@ -17,7 +17,7 @@ class DataDogNotificationService implements NotificationServiceInterface
         }
     }
 
-    public function send(string $message, array $attachment = null): void
+    public function send(string $message, ?array $attachment = null): void
     {
         if (!$this->ddLogger || !config('advanced-logger.services.datadog')) {
             return;
