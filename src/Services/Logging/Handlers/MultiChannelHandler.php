@@ -4,6 +4,7 @@ namespace Tfo\AdvancedLog\Services\Logging\Handlers;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
+use Monolog\Formatter\FormatterInterface;
 use Tfo\AdvancedLog\Contracts\LogFormatterInterface;
 use Tfo\AdvancedLog\Contracts\NotificationServiceInterface;
 
