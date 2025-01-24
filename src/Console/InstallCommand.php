@@ -159,14 +159,25 @@ class InstallCommand extends Command
     private function publishProvider(): bool
     {
         try {
-            $laravelVersion = $this->getApplication()->getVersion();
+            // Copy provider file first
+            $providerSource = $this->sourcePath . 'src/Providers/LoggingServiceProvider.php';
+            $providerDest = app_path('Providers/LoggingServiceProvider.php');
 
-            if (version_compare($laravelVersion, '11.0', '>=')) {
-                return $this->registerProviderLaravel11();
+            if (!File::exists($providerSource)) {
+                throw new \Exception('Provider file not found');
             }
-            return $this->registerProviderLegacy();
+
+            File::copy($providerSource, $providerDest);
+            $this->updateNamespace($providerDest, 'App\\Providers');
+
+            // Then register it based on Laravel version
+            $laravelVersion = $this->getApplication()->getVersion();
+            return version_compare($laravelVersion, '11.0', '>=')
+                ? $this->registerProviderLaravel11()
+                : $this->registerProviderLegacy();
+
         } catch (\Exception $e) {
-            $this->error('Error registering provider: ' . $e->getMessage());
+            $this->error('Error publishing provider: ' . $e->getMessage());
             return false;
         }
     }
@@ -178,16 +189,22 @@ class InstallCommand extends Command
             throw new \Exception('providers.php not found');
         }
 
-        $providers = require $providersPath;
-        $providerClass = 'App\\Providers\\LoggingServiceProvider';
+        // Load existing providers
+        $content = File::get($providersPath);
 
-        if (!in_array($providerClass, $providers)) {
-            $providers[] = $providerClass;
-            $content = "<?php\n\nreturn [\n    " . implode(",\n    ", $providers) . "::class ,\n];";
-            File::put($providersPath, $content);
+        // Fix any providers missing ::class
+        $content = preg_replace('/(\b[A-Z][A-Za-z0-9\\\\]+)(?!::class|\[),?/m', '$1::class,', $content);
+
+        // Add new provider if not exists
+        if (!str_contains($content, 'LoggingServiceProvider::class')) {
+            $content = preg_replace(
+                '/(\];)/',
+                "    App\\Providers\\LoggingServiceProvider::class,\n$1",
+                $content
+            );
         }
 
-        $this->info('Service provider registered for Laravel 11');
+        File::put($providersPath, $content);
         return true;
     }
 
