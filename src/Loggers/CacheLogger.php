@@ -26,9 +26,14 @@ class CacheLogger extends BaseLogger
     public function __construct(
         private string $action,
         private string $key,
-        private ?string $store = null
+        private ?string $store = null,
+        private ?string $status = null
     ) {
         $this->store = $store ?? config('cache.default');
+        $this->status = match ($this->action) {
+            'hit', 'miss' => 'info',
+            default => 'debug'
+        };
     }
 
     public function log(array $context = []): void
