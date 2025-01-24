@@ -3,8 +3,6 @@
 namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Log;
-use Monolog\Logger as MonologLogger;
 use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
@@ -27,15 +25,15 @@ class LoggingServiceProvider extends ServiceProvider
             'advanced-logger'
         );
 
-        // Estende o LogManager do Laravel
         $this->app->extend('log', function ($log) {
             $monolog = $log->getLogger();
 
-            // Adiciona nosso handler customizado ao Monolog
-            $monolog->pushHandler(new MultiChannelHandler(
+            $handler = new MultiChannelHandler(
                 new SlackFormatter(),
                 $this->getEnabledServices()
-            ));
+            );
+
+            $monolog->pushHandler($handler);
 
             return $log;
         });
@@ -54,22 +52,52 @@ class LoggingServiceProvider extends ServiceProvider
         }
     }
 
+    // private function getEnabledServices(): array
+    // {
+    //     $services = [];
+
+    //     if (config('advanced-logger.services.slack')) {
+    //         $services[] = new SlackNotificationService();
+    //     }
+
+    //     if (config('advanced-logger.services.sentry')) {
+    //         $services[] = new SentryNotificationService();
+    //     }
+
+    //     if (config('advanced-logger.services.datadog')) {
+    //         $services[] = new DataDogNotificationService();
+    //     }
+
+    //     return $services;
+    // }
+
+
     private function getEnabledServices(): array
     {
+        $env = config('advanced-logger.env');
+
+        $enabledLogs = explode(',', config("advanced-logger.enabled.$env"));
+
         $services = [];
-
-        if (config('advanced-logger.services.slack')) {
-            $services[] = new SlackNotificationService();
-        }
-
-        if (config('advanced-logger.services.sentry')) {
-            $services[] = new SentryNotificationService();
-        }
-
-        if (config('advanced-logger.services.datadog')) {
-            $services[] = new DataDogNotificationService();
+        foreach ($enabledLogs as $level) {
+            $levelServices = explode(',', config("advanced-logger.services.$level"));
+            foreach ($levelServices as $service) {
+                if (!in_array($service, $services)) {
+                    $services[] = $this->createNotificationService($service);
+                }
+            }
         }
 
         return $services;
+    }
+
+    private function createNotificationService($service)
+    {
+        return match ($service) {
+            'slack' => new SlackNotificationService(),
+            'sentry' => new SentryNotificationService(),
+            'datadog' => new DataDogNotificationService(),
+            default => throw new \InvalidArgumentException("Unknown notification service: $service"),
+        };
     }
 }
