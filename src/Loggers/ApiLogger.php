@@ -65,14 +65,14 @@ class ApiLogger extends BaseLogger
         return null;
     }
 
-    private function determineLogLevel(): Level
+    private function determineLogLevel(): \Monolog\Level
     {
         $code = $this->getResponseCode();
 
         return match (true) {
-            $code >= 500 => self::ERROR,
-            $code >= 400 => self::WARNING,
-            default => self::INFO
+            $code >= 500 => \Monolog\Level::Error,
+            $code >= 400 => \Monolog\Level::Warning,
+            default => \Monolog\Level::Info
         };
     }
 }
