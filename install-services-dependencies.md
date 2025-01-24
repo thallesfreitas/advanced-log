@@ -7,7 +7,7 @@
 composer require tfo/advanced-log
 
 # Run installer
-php artisan advanced-logger:install
+php artisan advanced-log:install
 ```
 
 ## Slack Setup

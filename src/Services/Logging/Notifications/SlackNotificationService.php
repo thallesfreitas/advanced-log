@@ -17,7 +17,7 @@ class SlackNotificationService implements NotificationServiceInterface
 
     public function send(string $message, array $attachment = null): void
     {
-        if (!config('advanced-logger.services.slack')) {
+        if (!config('advanced-log.services.slack')) {
             return;
         }
 

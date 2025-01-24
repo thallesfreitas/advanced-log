@@ -11,7 +11,7 @@ class DataDogNotificationService implements NotificationServiceInterface
 
     public function __construct()
     {
-        if (config('advanced-logger.services.datadog')) {
+        if (config('advanced-log.services.datadog')) {
             \DDTrace\Bootstrap::tracerAndLogger();
             $this->ddLogger = \DDTrace\Bootstrap::getLogger();
         }
@@ -19,7 +19,7 @@ class DataDogNotificationService implements NotificationServiceInterface
 
     public function send(string $message, ?array $attachment = null): void
     {
-        if (!$this->ddLogger || !config('advanced-logger.services.datadog')) {
+        if (!$this->ddLogger || !config('advanced-log.services.datadog')) {
             return;
         }
 

@@ -48,7 +48,7 @@ composer require tfo/advanced-log
 1. Publish the configuration file:
 
 ```bash
-php artisan advanced-logger:install
+php artisan advanced-log:install
 ```
 
 The installer will:

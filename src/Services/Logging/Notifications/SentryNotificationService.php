@@ -9,7 +9,7 @@ class SentryNotificationService implements NotificationServiceInterface
 {
     public function send(string $message, ?array $attachment = null): void
     {
-        if (!config('advanced-logger.services.sentry') || !config('advanced-logger.sentry.dsn')) {
+        if (!config('advanced-log.services.sentry') || !config('advanced-log.sentry.dsn')) {
             return;
         }
 

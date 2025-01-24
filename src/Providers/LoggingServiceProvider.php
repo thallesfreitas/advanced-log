@@ -21,8 +21,8 @@ class LoggingServiceProvider extends ServiceProvider
             ]);
         }
         // $this->mergeConfigFrom(
-        //     __DIR__ . '/../../config/advanced-logger.php',
-        //     'advanced-logger'
+        //     __DIR__ . '/../../config/advanced-log.php',
+        //     'advanced-log'
         // );
 
         $this->app->extend('log', function ($log) {
@@ -47,16 +47,18 @@ class LoggingServiceProvider extends ServiceProvider
     {
         // if ($this->app->runningInConsole()) {
         //     $this->publishes([
-        //         __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
-        //     ], 'advanced-logger-config');
+        //         __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
+        //     ], 'advanced-log-config');
         // }
 
         if ($this->app->runningInConsole()) {
 
-            $this->publishes([
-                __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
-                __DIR__ . '/../../routes/test_routes.php' => base_path('routes/advanced-logger.php'),
-            ], 'laravel-assets');
+            // $this->publishes([
+            //     __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
+            //     __DIR__ . '/../../routes/advanced-log.php' => base_path('routes/advanced-log.php'),
+            // ], 'laravel-assets');
+
+            $this->call('vendor:publish', ['--tag' => 'laravel-assets']);
 
         }
     }
@@ -65,15 +67,15 @@ class LoggingServiceProvider extends ServiceProvider
     // {
     //     $services = [];
 
-    //     if (config('advanced-logger.services.slack')) {
+    //     if (config('advanced-log.services.slack')) {
     //         $services[] = new SlackNotificationService();
     //     }
 
-    //     if (config('advanced-logger.services.sentry')) {
+    //     if (config('advanced-log.services.sentry')) {
     //         $services[] = new SentryNotificationService();
     //     }
 
-    //     if (config('advanced-logger.services.datadog')) {
+    //     if (config('advanced-log.services.datadog')) {
     //         $services[] = new DataDogNotificationService();
     //     }
 
@@ -83,13 +85,13 @@ class LoggingServiceProvider extends ServiceProvider
 
     private function getEnabledServices(): array
     {
-        $env = config('advanced-logger.env');
+        $env = config('advanced-log.env');
 
-        $enabledLogs = explode(',', config("advanced-logger.enabled.$env"));
+        $enabledLogs = explode(',', config("advanced-log.enabled.$env"));
 
         $services = [];
         foreach ($enabledLogs as $level) {
-            $levelServices = explode(',', config("advanced-logger.services.$level"));
+            $levelServices = explode(',', config("advanced-log.services.$level"));
             foreach ($levelServices as $service) {
                 if (!in_array($service, $services)) {
                     $services[] = $this->createNotificationService($service);

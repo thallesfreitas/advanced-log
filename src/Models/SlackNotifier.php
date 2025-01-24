@@ -11,6 +11,6 @@ class SlackNotifier extends Model
 
     public function routeNotificationForSlack(): string
     {
-        return config('advanced-logger.slack.webhook_url');
+        return config('advanced-log.slack.webhook_url');
     }
 }

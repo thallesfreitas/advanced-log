@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\App;
 
 class InstallCommand extends Command
 {
-    protected $signature = 'advanced-logger:install';
+    // protected $signature = 'advanced-log:install';
+    protected $signature = 'vendor:publish';
     protected $description = 'Install the Advanced Logger package';
 
     private $sourcePath;
@@ -137,11 +138,11 @@ class InstallCommand extends Command
 
         try {
             $routesDir = base_path('routes');
-            $testRoutesPath = $routesDir . '/routes/test_routes.php';
+            $testRoutesPath = $routesDir . '/routes/advanced-log.php';
             $webRoutesPath = $routesDir . '/web.php';
 
             // Adicionar require no web.php se não existir
-            $requireLine = "\nrequire __DIR__.'/routes/test_routes.php';";
+            $requireLine = "\nrequire __DIR__.'/routes/advanced-log.php';";
             if (!File::exists($webRoutesPath)) {
                 throw new \Exception('web.php not found');
             }

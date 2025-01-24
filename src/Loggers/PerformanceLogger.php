@@ -32,7 +32,7 @@ class PerformanceLogger extends BaseLogger
     ) {
         $this->operation = $operation;
         $this->duration = $duration;
-        $this->threshold = $threshold ?? config('advanced-logger.performance_threshold', 1000);
+        $this->threshold = $threshold ?? config('advanced-log.performance_threshold', 1000);
     }
 
     public function log(array $context = []): void

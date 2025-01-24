@@ -46,7 +46,7 @@ class MultiChannelHandler extends AbstractProcessingHandler
 
     private function logError(string $message): void
     {
-        $logPath = storage_path('logs/advanced-logger-errors.log');
+        $logPath = storage_path('logs/advanced-log-errors.log');
         $timestamp = date('Y-m-d H:i:s');
         file_put_contents($logPath, "[{$timestamp}] {$message}" . PHP_EOL, FILE_APPEND);
     }

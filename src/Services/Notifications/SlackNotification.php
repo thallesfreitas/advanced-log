@@ -24,8 +24,8 @@ class SlackNotification extends Notification
     public function toSlack($notifiable): SlackMessage
     {
         $slack = (new SlackMessage)
-            ->from(config('advanced-logger.slack.username'))
-            ->to(config('advanced-logger.slack.channel'))
+            ->from(config('advanced-log.slack.username'))
+            ->to(config('advanced-log.slack.channel'))
             ->content($this->message);
 
         if ($this->attachment) {

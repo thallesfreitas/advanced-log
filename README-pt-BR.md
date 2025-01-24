@@ -48,10 +48,10 @@ composer require tfo/advanced-log
 1. Publique o arquivo de configuração:
 
 ```bash
-php artisan advanced-logger:install
+php artisan advanced-log:install
 ```
 
-O comando advanced-logger:install irá:
+O comando advanced-log:install irá:
 
 - Publicar arquivos de configuração
 - Copiar loggers para app/Loggers
