@@ -97,7 +97,7 @@ class LoggingServiceProvider extends ServiceProvider
             'slack' => new SlackNotificationService(),
             'sentry' => new SentryNotificationService(),
             'datadog' => new DataDogNotificationService(),
-            default => throw new \InvalidArgumentException("Unknown notification service: $service"),
+            default => null,
         };
     }
 }
