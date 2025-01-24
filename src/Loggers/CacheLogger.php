@@ -48,6 +48,7 @@ class CacheLogger extends BaseLogger
         );
     }
 
+
     private function getLogLevel(): \Monolog\Level
     {
         return match ($this->status) {
