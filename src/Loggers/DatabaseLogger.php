@@ -3,6 +3,8 @@
 namespace Tfo\AdvancedLog\Loggers;
 
 use Illuminate\Support\Facades\Log;
+use Monolog\Level;
+
 
 /**
  * Logs database operations and queries
@@ -52,13 +54,13 @@ class DatabaseLogger extends BaseLogger
         );
     }
 
-    private function getLogLevel(): Level
+    private function getLogLevel(): \Monolog\Level
     {
         return match (strtolower($this->operation)) {
-            'delete', 'truncate' => self::WARNING,
-            'create', 'update', 'insert' => self::INFO,
-            'select', 'read' => self::DEBUG,
-            default => self::INFO
+            'delete', 'truncate' => \Monolog\Level::Warning,
+            'create', 'update', 'insert' => \Monolog\Level::Info,
+            'select', 'read' => \Monolog\Level::Debug,
+            default => \Monolog\Level::Info
         };
     }
 }
