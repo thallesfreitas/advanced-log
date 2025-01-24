@@ -38,6 +38,7 @@
   "extra": {
     "laravel": {
       "providers": [
+        "Tfo\\AdvancedLog\\Providers\\AlogRouteServiceProvider",
         "Tfo\\AdvancedLog\\Providers\\LoggingServiceProvider"
       ],
       "aliases": {
@@ -45,6 +46,9 @@
       }
     }
   },
+  "post-package-install": [
+    "php artisan advanced-log:install"
+  ],
   "minimum-stability": "dev",
   "prefer-stable": true
 }

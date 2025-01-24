@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\App;
 
 class InstallCommand extends Command
 {
-    // protected $signature = 'advanced-log:install';
-    protected $signature = 'vendor:publish';
+    protected $signature = 'advanced-log:install';
+
     protected $description = 'Install the Advanced Logger package';
 
     private $sourcePath;
@@ -129,6 +129,143 @@ class InstallCommand extends Command
         }
     }
 
+    //     private function publishRoutes()
+//     {
+//         if (App::environment('production')) {
+//             $this->warn('Test routes are not published in production environment.');
+//             return;
+//         }
+
+    //         try {
+//             $routesDir = base_path('routes');
+//             $testRoutesPath = $routesDir . '/advanced-log.php';
+//             $webRoutesPath = $routesDir . '/web.php';
+
+    //             // Adicionar require no web.php se não existir
+//             $requireLine = "\nrequire __DIR__.'/routes/advanced-log.php';";
+//             if (!File::exists($webRoutesPath)) {
+//                 throw new \Exception('web.php not found');
+//             }
+
+    //             if (!str_contains(File::get($webRoutesPath), $requireLine)) {
+//                 File::append($webRoutesPath, $requireLine);
+//             }
+
+    //             $routesContent = <<<'EOT'
+
+    // use Illuminate\Support\Facades\Route;
+// use App\Support\ALog;
+
+    // // Test Routes for Advanced Logger
+// Route::prefix('test-logs')->middleware(['web'])->group(function () {
+//    Route::get('/performance', function () {
+//        $startTime = microtime(true);
+//        sleep(1);
+//        $duration = (microtime(true) - $startTime) * 1000;
+//        ALog::performance('Test Operation', $duration);
+//        return 'Performance log tested';
+//    });
+
+    //    Route::get('/audit', function () {
+//        ALog::audit('update', 'User', 1, [
+//            'name' => ['old' => 'John', 'new' => 'Johnny'],
+//            'email' => ['old' => 'john@example.com', 'new' => 'johnny@example.com']
+//        ]);
+//        return 'Audit log tested';
+//    });
+
+    //    Route::get('/security', function () {
+//        ALog::security('Login Failed', [
+//            'email' => 'user@example.com',
+//            'attempts' => 3
+//        ]);
+//        return 'Security log tested';
+//    });
+
+    //    Route::get('/api', function () {
+//        $response = response()->json(['status' => 'success']);
+//        ALog::api('/api/users', 'GET', $response, 150.5);
+//        return 'API log tested';
+//    });
+
+    //    Route::get('/database', function () {
+//        ALog::database('create', 'users', 1, [
+//            'data' => ['name' => 'John', 'email' => 'john@example.com']
+//        ]);
+//        return 'Database log tested';
+//    });
+
+    //    Route::get('/job', function () {
+//        ALog::job('SendWelcomeEmail', 'completed', [
+//            'user_id' => 1,
+//            'duration' => 1500
+//        ]);
+//        return 'Job log tested';
+//    });
+
+    //    Route::get('/cache', function () {
+//        ALog::cache('hit', 'user:123', [
+//            'ttl' => 3600
+//        ]);
+//        return 'Cache log tested';
+//    });
+
+    //    Route::get('/request', function () {
+//        ALog::request('API Request', [
+//            'endpoint' => '/api/users',
+//            'params' => ['page' => 1]
+//        ]);
+//        return 'Request log tested';
+//    });
+
+    //    Route::get('/payment', function () {
+//        ALog::payment('success', 99.99, 'stripe', [
+//            'transaction_id' => 'tx_123'
+//        ]);
+//        return 'Payment log tested';
+//    });
+
+    //    Route::get('/notification', function () {
+//        ALog::notification('email', 'user@example.com', 'welcome', [
+//            'template' => 'welcome-email'
+//        ]);
+//        return 'Notification log tested';
+//    });
+
+    //    Route::get('/file', function () {
+//        ALog::file('upload', 'images/profile.jpg', [
+//            'size' => '2.5MB',
+//            'type' => 'image/jpeg'
+//        ]);
+//        return 'File log tested';
+//    });
+
+    //    Route::get('/auth', function () {
+//        ALog::auth('login_success', [
+//            'remember' => true,
+//            'device' => 'iPhone 13'
+//        ]);
+//        return 'Auth log tested';
+//    });
+
+    //    Route::get('/export', function () {
+//        ALog::export('users', 1000, [
+//            'format' => 'csv',
+//            'filters' => ['status' => 'active']
+//        ]);
+//        return 'Export log tested';
+//    });
+// });
+// EOT;
+
+    //             File::put($testRoutesPath, $routesContent);
+//             $this->info('Test routes published successfully.');
+//         } catch (\Exception $e) {
+//             throw new \Exception('Error publishing routes: ' . $e->getMessage());
+//         }
+//     }
+
+
     private function publishRoutes()
     {
         if (App::environment('production')) {
@@ -137,129 +274,15 @@ class InstallCommand extends Command
         }
 
         try {
-            $routesDir = base_path('routes');
-            $testRoutesPath = $routesDir . '/routes/advanced-log.php';
-            $webRoutesPath = $routesDir . '/web.php';
+            $sourceRoute = $this->sourcePath . 'routes/advanced-log.php';
+            $destRoute = base_path('routes/advanced-log.php');
 
-            // Adicionar require no web.php se não existir
-            $requireLine = "\nrequire __DIR__.'/routes/advanced-log.php';";
-            if (!File::exists($webRoutesPath)) {
-                throw new \Exception('web.php not found');
-            }
+            File::copy($sourceRoute, $destRoute);
 
-            if (!str_contains(File::get($webRoutesPath), $requireLine)) {
-                File::append($webRoutesPath, $requireLine);
-            }
+            $this->info('Test routes published to: routes/advanced-log.php');
+            $this->info('To enable test routes, add this to your RouteServiceProvider::boot():');
+            $this->info('Route::middleware("web")->group(base_path("routes/advanced-log.php"));');
 
-            $routesContent = <<<'EOT'
-
-use Illuminate\Support\Facades\Route;
-use App\Support\ALog;
-
-// Test Routes for Advanced Logger
-Route::prefix('test-logs')->middleware(['web'])->group(function () {
-   Route::get('/performance', function () {
-       $startTime = microtime(true);
-       sleep(1);
-       $duration = (microtime(true) - $startTime) * 1000;
-       ALog::performance('Test Operation', $duration);
-       return 'Performance log tested';
-   });
-
-   Route::get('/audit', function () {
-       ALog::audit('update', 'User', 1, [
-           'name' => ['old' => 'John', 'new' => 'Johnny'],
-           'email' => ['old' => 'john@example.com', 'new' => 'johnny@example.com']
-       ]);
-       return 'Audit log tested';
-   });
-
-   Route::get('/security', function () {
-       ALog::security('Login Failed', [
-           'email' => 'user@example.com',
-           'attempts' => 3
-       ]);
-       return 'Security log tested';
-   });
-
-   Route::get('/api', function () {
-       $response = response()->json(['status' => 'success']);
-       ALog::api('/api/users', 'GET', $response, 150.5);
-       return 'API log tested';
-   });
-
-   Route::get('/database', function () {
-       ALog::database('create', 'users', 1, [
-           'data' => ['name' => 'John', 'email' => 'john@example.com']
-       ]);
-       return 'Database log tested';
-   });
-
-   Route::get('/job', function () {
-       ALog::job('SendWelcomeEmail', 'completed', [
-           'user_id' => 1,
-           'duration' => 1500
-       ]);
-       return 'Job log tested';
-   });
-
-   Route::get('/cache', function () {
-       ALog::cache('hit', 'user:123', [
-           'ttl' => 3600
-       ]);
-       return 'Cache log tested';
-   });
-
-   Route::get('/request', function () {
-       ALog::request('API Request', [
-           'endpoint' => '/api/users',
-           'params' => ['page' => 1]
-       ]);
-       return 'Request log tested';
-   });
-
-   Route::get('/payment', function () {
-       ALog::payment('success', 99.99, 'stripe', [
-           'transaction_id' => 'tx_123'
-       ]);
-       return 'Payment log tested';
-   });
-
-   Route::get('/notification', function () {
-       ALog::notification('email', 'user@example.com', 'welcome', [
-           'template' => 'welcome-email'
-       ]);
-       return 'Notification log tested';
-   });
-
-   Route::get('/file', function () {
-       ALog::file('upload', 'images/profile.jpg', [
-           'size' => '2.5MB',
-           'type' => 'image/jpeg'
-       ]);
-       return 'File log tested';
-   });
-
-   Route::get('/auth', function () {
-       ALog::auth('login_success', [
-           'remember' => true,
-           'device' => 'iPhone 13'
-       ]);
-       return 'Auth log tested';
-   });
-
-   Route::get('/export', function () {
-       ALog::export('users', 1000, [
-           'format' => 'csv',
-           'filters' => ['status' => 'active']
-       ]);
-       return 'Export log tested';
-   });
-});
-EOT;
-
-            File::put($testRoutesPath, $routesContent);
-            $this->info('Test routes published successfully.');
         } catch (\Exception $e) {
             throw new \Exception('Error publishing routes: ' . $e->getMessage());
         }
