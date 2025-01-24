@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'custom' => [
+        'driver' => 'custom',
+        'via' => Tfo\AdvancedLog\Services\Logging\CustomLogger::class,
+    ],
     'slack' => [
         'webhook_url' => env('LOGGER_SLACK_WEBHOOK_URL', ''),
         'channel' => env('LOGGER_SLACK_CHANNEL', '#logs'),
