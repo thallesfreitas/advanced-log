@@ -2,22 +2,25 @@
 
 namespace Tfo\AdvancedLog\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
-use Tfo\AdvancedLog\Providers\LoggingServiceProvider;
+use Orchestra\Testbench\TestCase as BaseTestCase;
+use PHPUnit\Framework\Assert;
 
-class TestCase extends Orchestra
+class TestCase extends BaseTestCase
 {
-    protected function getPackageProviders($app): array
+    protected function getPackageProviders($app)
     {
         return [
-            LoggingServiceProvider::class,
+            'Tfo\AdvancedLog\Providers\LoggingServiceProvider'
         ];
     }
 
-    protected function getEnvironmentSetUp($app): void
+    protected function assertEquals($expected, $actual, string $message = ''): void
     {
-        $app['config']->set('advanced-logger.slack.webhook_url', 'https://hooks.slack.com/services/TEST');
-        $app['config']->set('advanced-logger.slack.channel', '#test');
-        $app['config']->set('advanced-logger.services.slack', true);
+        Assert::assertEquals($expected, $actual, $message);
+    }
+
+    protected function fail(string $message): void
+    {
+        Assert::fail($message);
     }
 }
