@@ -74,23 +74,13 @@ class RequestLogger extends BaseLogger
             ->map(fn($value) => head($value))
             ->all();
     }
-
-    // private function getLogLevel(): Level
-    // {
-    //     return match (strtoupper(request()->method())) {
-    //         'DELETE', 'PUT', 'PATCH' => self::NOTICE,
-    //         'POST' => self::INFO,
-    //         default => self::DEBUG
-    //     };
-    // }
-
     private function getLogLevel(): Level
     {
-        return match ($this->status) {
-            'failed' => Level::Error,
-            'retrying' => Level::Warning,
-            'started' => Level::Debug,
-            default => Level::Info
+        return match (strtoupper(request()->method())) {
+            'DELETE', 'PUT', 'PATCH' => self::NOTICE,
+            'POST' => self::INFO,
+            default => self::DEBUG
         };
     }
+
 }

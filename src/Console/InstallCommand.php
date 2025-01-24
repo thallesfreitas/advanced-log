@@ -35,7 +35,7 @@ class InstallCommand extends Command
 
             $steps = [
                 'publishConfig',
-                'publishLoggers',
+                // 'publishLoggers',
                 'publishProvider',
                 'updateEnvironmentFile',
                 'publishRoutes',
