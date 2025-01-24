@@ -55,7 +55,7 @@ class LoggingServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
-                __DIR__ . '/../routes/test_routes.php' => base_path('routes/advanced-logger.php'),
+                __DIR__ . '/../../routes/test_routes.php' => base_path('routes/advanced-logger.php'),
             ], 'laravel-assets');
 
         }
