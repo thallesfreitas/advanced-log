@@ -9,9 +9,11 @@ class RouteServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        if ($this->app()->environment('local')) {
-            Route::middleware(['web'])
-                ->group(base_path('routes/test_routes.php'));
-        }
+        $this->routes(function (): void {
+            if ($this->app->environment('local')) {
+                Route::middleware(['web'])
+                    ->group(base_path('routes/advanced-logger.php'));
+            }
+        });
     }
 }
