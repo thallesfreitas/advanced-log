@@ -106,7 +106,7 @@ class InstallCommand extends Command
     private function publishRoutes()
     {
         $routesPath = base_path('routes/web.php');
-        $routesContent = File::get($this->sourcePath . 'routes/test_routes.php');
+        $routesContent = File::get($this->sourcePath . 'routes/test.php');
         File::append($routesPath, "\n" . $routesContent);
     }
 
