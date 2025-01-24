@@ -3,6 +3,8 @@
 namespace Tfo\AdvancedLog\Loggers;
 
 use Illuminate\Support\Facades\Log;
+use Monolog\Level;
+
 
 /**
  * Logs background job execution status and metrics
@@ -47,13 +49,13 @@ class JobLogger extends BaseLogger
         );
     }
 
-    private function getLogLevel(): Level
+    private function getLogLevel(): \Monolog\Level
     {
         return match ($this->status) {
-            'failed' => self::ERROR,
-            'retrying' => self::WARNING,
-            'started' => self::DEBUG,
-            default => self::INFO
+            'failed' => Level::Error,
+            'retrying' => Level::Warning,
+            'started' => Level::Debug,
+            default => Level::Info
         };
     }
 }
