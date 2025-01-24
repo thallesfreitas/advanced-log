@@ -1,91 +1,186 @@
 # Detailed Service Configuration Guides
 
-## Slack Deep Dive
+## Advanced Logger Features
 
-### Custom Bot Setup
-
-1. In Slack App settings:
-   ```
-   Features > Bot Token Scopes
-   - Add: chat:write
-   - Add: incoming-webhook
-   ```
-
-### Message Formatting
+### Basic Usage
 
 ```php
-Log::info('Message', [
-    'blocks' => [
-        [
-            'type' => 'section',
-            'text' => ['type' => 'mrkdwn', 'text' => '*Bold* _italic_']
-        ]
-    ]
+use Tfo\AdvancedLog\Support\ALog;
+
+// Simple logging
+ALog::performance('Process Order', $duration);
+ALog::audit('update', 'User', 1, $changes);
+ALog::security('Login Failed', ['attempts' => 3]);
+```
+
+## Slack Integration
+
+### Setup Guide
+
+1. Create Slack App:
+
+   - Go to api.slack.com/apps
+   - Create New App
+   - Enable Incoming Webhooks
+   - Add webhook to channel
+
+2. Environment Configuration:
+
+```env
+LOGGER_SLACK_WEBHOOK_URL=your-webhook-url
+LOGGER_SLACK_CHANNEL=#your-channel
+LOGGER_SLACK_USERNAME=Logger Bot
+LOGGER_ENABLE_SLACK=true
+```
+
+### Logging Examples
+
+```php
+// Performance Logging
+ALog::performance('Process Order', 1500, [
+    'order_id' => 123
+]);
+
+// Audit Logging
+ALog::audit('update', 'User', 1, [
+    'name' => ['old' => 'John', 'new' => 'Johnny']
+]);
+
+// Security Events
+ALog::security('Login Failed', [
+    'email' => 'user@example.com',
+    'attempts' => 3
 ]);
 ```
 
-### Channel Configuration
+## Sentry Integration
 
-- Public: `#channel-name`
-- Private: Use channel ID
-- Direct Messages: User ID
+### Setup Guide
 
-## Sentry Advanced Configuration
+1. Environment Configuration:
 
-### Performance Monitoring
+```env
+LOGGER_SENTRY_DSN=your-sentry-dsn
+LOGGER_ENABLE_SENTRY=true
+```
+
+### Logging Examples
 
 ```php
-\Sentry\startTransaction([
-    'op' => 'http.request',
-    'name' => 'Process Order'
+// Error Logging
+ALog::error('Payment Failed', [
+    'exception' => $e,
+    'order_id' => $orderId
+]);
+
+// Performance Monitoring
+ALog::performance('API Call', $duration, [
+    'endpoint' => '/api/users',
+    'method' => 'GET'
 ]);
 ```
 
-### Context Enrichment
+## DataDog Integration
 
-```php
-\Sentry\configureScope(function ($scope) {
-    $scope->setUser([
-        'id' => auth()->id(),
-        'email' => auth()->user()->email
-    ]);
-});
+### Setup Guide
+
+1. Environment Configuration:
+
+```env
+LOGGER_DATADOG_API_KEY=your-api-key
+LOGGER_DATADOG_APP_KEY=your-app-key
+LOGGER_DATADOG_SERVICE=your-service-name
+LOGGER_ENABLE_DATADOG=true
 ```
 
-### Sample Rates
+### Logging Examples
 
 ```php
-'traces_sample_rate' => env('SENTRY_TRACES_SAMPLE_RATE', 0.2),
-'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE', 0.1),
-```
+// API Monitoring
+ALog::api('/api/users', 'GET', $response, 150.5);
 
-## DataDog Integration Details
-
-### Metric Collection
-
-```php
-// Custom metrics
-\DDTrace\GlobalTracer::get()->trace('process_order', [
-    'resource' => 'OrderProcessor',
-    'service' => 'orders'
+// Job Monitoring
+ALog::job('SendWelcomeEmail', 'completed', [
+    'duration' => 1500,
+    'user_id' => 1
 ]);
 ```
 
-### Log Correlation
+## Additional Features
+
+### Request Logging
 
 ```php
-// Add trace ID to logs
-Log::info('Message', [
-    'dd' => [
-        'trace_id' => \DDTrace\GlobalTracer::get()->getActiveSpan()->getTraceId()
-    ]
+ALog::request('API Request', [
+    'endpoint' => '/api/users',
+    'params' => ['page' => 1]
 ]);
 ```
 
-### Environment Tagging
+### Payment Logging
 
 ```php
-DD_ENV=production
-DD_SERVICE=api
-DD_VERSION=1.2.3
+ALog::payment('success', 99.99, 'stripe', [
+    'transaction_id' => 'tx_123'
+]);
 ```
+
+### File Operations
+
+```php
+ALog::file('upload', 'images/profile.jpg', [
+    'size' => '2.5MB',
+    'type' => 'image/jpeg'
+]);
+```
+
+### Cache Operations
+
+```php
+ALog::cache('hit', 'user:123', [
+    'ttl' => 3600
+]);
+```
+
+### Database Operations
+
+```php
+ALog::database('create', 'users', 1, [
+    'data' => ['name' => 'John', 'email' => 'john@example.com']
+]);
+```
+
+### Notification Tracking
+
+```php
+ALog::notification('email', 'user@example.com', 'welcome', [
+    'template' => 'welcome-email'
+]);
+```
+
+### Export Logging
+
+```php
+ALog::export('users', 1000, [
+    'format' => 'csv',
+    'filters' => ['status' => 'active']
+]);
+```
+
+## Testing Routes
+
+Test endpoints available (non-production only):
+
+- `/test-logs/performance`
+- `/test-logs/audit`
+- `/test-logs/security`
+- `/test-logs/api`
+- `/test-logs/database`
+- `/test-logs/job`
+- `/test-logs/cache`
+- `/test-logs/request`
+- `/test-logs/payment`
+- `/test-logs/notification`
+- `/test-logs/file`
+- `/test-logs/auth`
+- `/test-logs/export`

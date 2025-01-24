@@ -3,6 +3,7 @@
 namespace Tfo\AdvancedLog\Loggers;
 
 use Illuminate\Support\Facades\Log;
+use Monolog\Level;
 
 /**
  * Logs API interactions, responses, and performance metrics
@@ -65,14 +66,14 @@ class ApiLogger extends BaseLogger
         return null;
     }
 
-    private function determineLogLevel(): \Monolog\Level
+    private function determineLogLevel(): Level
     {
         $code = $this->getResponseCode();
 
         return match (true) {
-            $code >= 500 => \Monolog\Level::Error,
-            $code >= 400 => \Monolog\Level::Warning,
-            default => \Monolog\Level::Info
+            $code >= 500 => Level::Error,
+            $code >= 400 => Level::Warning,
+            default => Level::Info
         };
     }
 }

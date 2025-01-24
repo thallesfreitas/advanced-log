@@ -49,7 +49,7 @@ class JobLogger extends BaseLogger
         );
     }
 
-    private function getLogLevel(): \Monolog\Level
+    private function getLogLevel(): Level
     {
         return match ($this->status) {
             'failed' => Level::Error,

@@ -54,13 +54,13 @@ class DatabaseLogger extends BaseLogger
         );
     }
 
-    private function getLogLevel(): \Monolog\Level
+    private function getLogLevel(): Level
     {
         return match (strtolower($this->operation)) {
-            'delete', 'truncate' => \Monolog\Level::Warning,
-            'create', 'update', 'insert' => \Monolog\Level::Info,
-            'select', 'read' => \Monolog\Level::Debug,
-            default => \Monolog\Level::Info
+            'delete', 'truncate' => Level::Warning,
+            'create', 'update', 'insert' => Level::Info,
+            'select', 'read' => Level::Debug,
+            default => Level::Info
         };
     }
 }

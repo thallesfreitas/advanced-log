@@ -3,6 +3,7 @@
 namespace Tfo\AdvancedLog\Loggers;
 
 use Illuminate\Support\Facades\Log;
+use Monolog\Level;
 
 /**
  * Logs notification events across different channels

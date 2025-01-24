@@ -3,6 +3,7 @@
 namespace Tfo\AdvancedLog\Loggers;
 
 use Illuminate\Support\Facades\Log;
+use Monolog\Level;
 
 /**
  * Logs HTTP request details and metrics
@@ -83,7 +84,7 @@ class RequestLogger extends BaseLogger
     //     };
     // }
 
-    private function getLogLevel(): \Monolog\Level
+    private function getLogLevel(): Level
     {
         return match ($this->status) {
             'failed' => Level::Error,

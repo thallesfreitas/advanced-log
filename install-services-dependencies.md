@@ -1,119 +1,122 @@
 # Service Dependencies Installation Guide
 
+## Installation
+
+```bash
+# Install package
+composer require tfo/advanced-log
+
+# Run installer
+php artisan advanced-logger:install
+```
+
 ## Slack Setup
 
-1. Go to [Slack API](https://api.slack.com/apps)
-2. Click "Create New App"
+1. Visit [Slack API](https://api.slack.com/apps)
+2. Create New App > From scratch
+3. Enable Incoming Webhooks:
 
-   - Choose "From scratch"
-   - Name your app (e.g., "Logger")
-   - Select your workspace
+   - Activate Incoming Webhooks
+   - Add New Webhook to Workspace
+   - Select channel
+   - Copy Webhook URL
 
-3. Configure Incoming Webhooks:
-
-   - In the left sidebar, click "Incoming Webhooks"
-   - Toggle "Activate Incoming Webhooks" to On
-   - Click "Add New Webhook to Workspace"
-   - Select the channel for notifications
-   - Copy the Webhook URL
-
-4. Add to `.env`:
+4. Configure `.env`:
 
 ```env
 LOGGER_SLACK_WEBHOOK_URL=your-webhook-url
 LOGGER_SLACK_CHANNEL=#your-channel
 LOGGER_SLACK_USERNAME=Logger Bot
+LOGGER_ENABLE_SLACK=true
 ```
 
 ## Sentry Setup
 
 1. Create account at [Sentry.io](https://sentry.io)
-2. Create new project:
-
-   - Select "Laravel" as platform
-   - Follow setup instructions
-
-3. Get DSN:
-
-   - Go to Settings > Projects > [Your Project]
-   - Click "Client Keys (DSN)"
-   - Copy the DSN
-
-4. Add to `.env`:
+2. Create Laravel project
+3. Get DSN from Settings > Projects > [Project] > Client Keys
+4. Configure `.env`:
 
 ```env
 LOGGER_SENTRY_DSN=your-sentry-dsn
+LOGGER_ENABLE_SENTRY=true
 ```
 
 ## DataDog Setup
 
-1. Sign up at [DataDog](https://www.datadoghq.com/)
-2. Create new application:
+1. Register at [DataDog](https://www.datadoghq.com/)
+2. Get API/APP keys:
 
-   - Go to Organization Settings > Application Keys
-   - Click "New Key"
-   - Name your application
+   - Organization Settings > API Keys
+   - Organization Settings > Application Keys
 
-3. Get API and APP keys:
-
-   - Go to Organization Settings > API Keys
-   - Copy API Key
-   - Go to Application Keys
-   - Copy Application Key
-
-4. Add to `.env`:
+3. Configure `.env`:
 
 ```env
 LOGGER_DATADOG_API_KEY=your-api-key
 LOGGER_DATADOG_APP_KEY=your-app-key
 LOGGER_DATADOG_SERVICE=your-service-name
-```
-
-## Service Configuration
-
-Enable/disable services in `.env`:
-
-```env
-LOGGER_ENABLE_SLACK=true
-LOGGER_ENABLE_SENTRY=true
 LOGGER_ENABLE_DATADOG=true
 ```
 
-## Testing Services
+## Verification
 
-Use test routes to verify integration:
+Test your setup using provided routes:
 
 ```bash
-# Test all services
-curl http://your-app.test/logs/test-all
-
-# Test individual services
-curl http://your-app.test/logs/test-log-levels
-curl http://your-app.test/logs/test-exception
+# Test all loggers
+curl http://your-app.test/test-logs/performance
+curl http://your-app.test/test-logs/audit
+curl http://your-app.test/test-logs/security
+# ... etc
 ```
 
-Check respective dashboards:
+Verify in respective dashboards:
 
-- Slack: Messages in configured channel
-- Sentry: Issues section
-- DataDog: Logs section
+- Slack: Check configured channel
+- Sentry: View Issues section
+- DataDog: Check Logs section
+
+## Usage Examples
+
+```php
+use App\Support\ALog;
+
+// Performance logging
+ALog::performance('Process Order', $duration, [
+    'order_id' => 123
+]);
+
+// Audit logging
+ALog::audit('update', 'User', 1, [
+    'name' => ['old' => 'John', 'new' => 'Johnny']
+]);
+
+// Security logging
+ALog::security('Login Failed', [
+    'email' => 'user@example.com',
+    'attempts' => 3
+]);
+```
 
 ## Troubleshooting
 
-### Slack
+### Slack Issues
 
 - Verify webhook URL format
-- Check channel name format (must include #)
-- Confirm bot permissions
+- Confirm channel format (include #)
+- Check bot permissions
+- Test using `/test-logs/performance`
 
-### Sentry
+### Sentry Issues
 
-- Verify DSN format
-- Check project settings
-- Confirm error reporting level
+- Validate DSN format
+- Confirm project settings
+- Test using `/test-logs/error`
 
-### DataDog
+### DataDog Issues
 
-- Verify API/APP key formats
+- Verify API/APP key format
 - Check service name
 - Confirm log collection enabled
+- Test using `/test-logs/performance`

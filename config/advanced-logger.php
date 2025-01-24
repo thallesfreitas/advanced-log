@@ -18,13 +18,34 @@ return [
         'service_name' => env('LOGGER_DATADOG_SERVICE', 'laravel-app'),
     ],
 
-    'services' => [
-        'slack' => env('LOGGER_ENABLE_SLACK', true),
-        'sentry' => env('LOGGER_ENABLE_SENTRY', true),
-        'datadog' => env('LOGGER_ENABLE_DATADOG', true),
+    'env' => env('LOGGER_ENV', 'development'),
+
+    'enabled' => [
+        'dev' => env('LOGGER_ENABLED_DEV', 'performance,audit,security,api,database,job,cache,request,payment,notification,file,auth,export'),
+        'prod' => env('LOGGER_ENABLED_PROD', 'security,api,database,cache,request,notification,file,auth,export'),
     ],
 
-    // Configurações gerais
-    'level' => env('LOGGER_LEVEL', 'debug'),
-    'environment' => env('LOGGER_ENV', env('APP_ENV')),
+    'services' => [
+        'emergency' => env('LOGGER_EMERGENCY_SERVICES', 'slack,sentry'),
+        'alert' => env('LOGGER_ALERT_SERVICES', 'slack,sentry'),
+        'critical' => env('LOGGER_CRITICAL_SERVICES', 'slack,sentry'),
+        'error' => env('LOGGER_ERROR_SERVICES', 'slack,sentry'),
+        'warning' => env('LOGGER_WARNING_SERVICES', 'slack'),
+        'notice' => env('LOGGER_NOTICE_SERVICES', 'slack'),
+        'info' => env('LOGGER_INFO_SERVICES', 'slack'),
+        'debug' => env('LOGGER_DEBUG_SERVICES', 'slack'),
+        'performance' => env('LOGGER_PERFORMANCE_SERVICES', 'slack,sentry'),
+        'audit' => env('LOGGER_AUDIT_SERVICES', 'slack,sentry'),
+        'security' => env('LOGGER_SECURITY_SERVICES', 'slack,sentry'),
+        'api' => env('LOGGER_API_SERVICES', 'slack,sentry'),
+        'database' => env('LOGGER_DATABASE_SERVICES', 'slack,sentry'),
+        'job' => env('LOGGER_JOB_SERVICES', 'slack,sentry'),
+        'cache' => env('LOGGER_CACHE_SERVICES', 'slack'),
+        'request' => env('LOGGER_REQUEST_SERVICES', 'slack,sentry'),
+        'payment' => env('LOGGER_PAYMENT_SERVICES', 'slack'),
+        'notification' => env('LOGGER_NOTIFICATION_SERVICES', 'slack,sentry'),
+        'file' => env('LOGGER_FILE_SERVICES', 'slack,sentry'),
+        'auth' => env('LOGGER_AUTH_SERVICES', 'slack,sentry'),
+        'export' => env('LOGGER_EXPORT_SERVICES', 'slack'),
+    ],
 ];
