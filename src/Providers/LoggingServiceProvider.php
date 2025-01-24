@@ -3,6 +3,7 @@
 namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Tfo\AdvancedLog\Providers\AlogRouteServiceProvider;
 use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
@@ -24,10 +25,10 @@ class LoggingServiceProvider extends ServiceProvider
                 InstallCommand::class,
             ]);
         }
-        // $this->mergeConfigFrom(
-        //     __DIR__ . '/../../config/advanced-log.php',
-        //     'advanced-log'
-        // );
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/advanced-log.php',
+            'advanced-log'
+        );
 
         $this->app->extend('log', function ($log) {
             $monolog = $log->getLogger();
@@ -49,12 +50,12 @@ class LoggingServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
-                __DIR__ . '/../../routes/advanced-log.php' => base_path('routes/advanced-log.php'),
-            ], 'advanced-logger-config');
-        }
+        // if ($this->app->runningInConsole()) {
+        //     $this->publishes([
+        //         __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
+        //         __DIR__ . '/../../routes/advanced-log.php' => base_path('routes/advanced-log.php'),
+        //     ], 'advanced-logger-config');
+        // }
     }
 
     // private function getEnabledServices(): array
@@ -80,6 +81,8 @@ class LoggingServiceProvider extends ServiceProvider
     private function getEnabledServices(): array
     {
         $env = config('advanced-log.env');
+
+        // Log::debug();
 
         $enabledLogs = explode(',', config("advanced-log.enabled.$env"));
 
