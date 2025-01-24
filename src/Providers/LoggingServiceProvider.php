@@ -50,6 +50,15 @@ class LoggingServiceProvider extends ServiceProvider
                 __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
             ], 'advanced-logger-config');
         }
+
+        if ($this->app->runningInConsole()) {
+
+            $this->publishes([
+                __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
+                __DIR__ . '/../routes/test_routes.php' => base_path('routes/advanced-logger.php'),
+            ], 'laravel-assets');
+
+        }
     }
 
     // private function getEnabledServices(): array
