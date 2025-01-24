@@ -106,7 +106,7 @@ class InstallCommand extends Command
     private function publishRoutes()
     {
         $routesPath = base_path('routes/web.php');
-        $routesContent = file_get_contents(__DIR__ . '/../../routes/test_routes.php');
+        $routesContent = file_get_contents(__DIR__ . '/../../routes/test.php');
 
         // Remove PHP tags e use statements se já existirem no arquivo
         $routesContent = trim(preg_replace([
