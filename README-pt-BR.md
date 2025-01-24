@@ -83,6 +83,115 @@ LOGGER_ENABLE_DATADOG=true
 
 ## Uso
 
+## Tipos de Log e Usos
+
+**Test Log Levels**
+Níveis padrão do Laravel. Use para testar funcionalidade básica de logging.
+
+**Performance Log**
+Monitora tempos de execução. Use para:
+
+- Processos demorados
+- Queries de banco
+- Chamadas API
+- Fluxos críticos
+
+**Audit Log**
+Rastreia mudanças em dados. Use para:
+
+- Modificações de usuário
+- Alterações de permissões
+- Atualizações críticas
+- Mudanças de configuração
+
+**Security Log**
+Monitora eventos de segurança. Use para:
+
+- Tentativas de login
+- Mudanças de permissão
+- Atividades suspeitas
+- Violações de acesso
+
+**API Log**
+Rastreia interações de API. Use para:
+
+- Chamadas a serviços externos
+- Monitoramento de endpoints
+- Debug de integrações
+- Performance de API
+
+**Database Log**
+Monitora operações de banco. Use para:
+
+- Mudanças críticas de dados
+- Atualizações de schema
+- Operações em massa
+- Verificações de integridade
+
+**Job Log**
+Rastreia tarefas em background. Use para:
+
+- Processamento de filas
+- Tarefas agendadas
+- Jobs demorados
+- Análise de falhas
+
+**Cache Log**
+Monitora operações de cache. Use para:
+
+- Hits/misses de cache
+- Invalidação de cache
+- Uso de memória
+- Otimização de performance
+
+**Request Log**
+Rastreia requisições HTTP. Use para:
+
+- Endpoints importantes
+- Interações de usuário
+- Rastreamento de erros
+- Monitoramento de performance
+
+**Payment Log**
+Monitora transações financeiras. Use para:
+
+- Processamento de pagamentos
+- Reembolsos
+- Mudanças de assinatura
+- Erros de pagamento
+
+**Notification Log**
+Rastreia eventos de comunicação. Use para:
+
+- Envio de emails
+- Entrega de SMS
+- Notificações push
+- Erros de comunicação
+
+**File Log**
+Monitora operações de arquivo. Use para:
+
+- Uploads
+- Downloads
+- Operações de storage
+- Processamento de arquivos
+
+**Auth Log**
+Rastreia eventos de autenticação. Use para:
+
+- Login/logout
+- Resets de senha
+- Eventos 2FA
+- Gerenciamento de sessão
+
+**Export Log**
+Monitora exportações de dados. Use para:
+
+- Geração de relatórios
+- Downloads em massa
+- Migrações de dados
+- Erros de exportação
+
 ### Logs Básicos
 
 ```php

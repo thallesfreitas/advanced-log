@@ -83,6 +83,115 @@ LOGGER_ENABLE_DATADOG=true
 
 ## Usage
 
+## Log Types and Usage
+
+**Test Log Levels**
+Standard Laravel log levels. Use to test basic logging functionality.
+
+**Performance Log**
+Monitor execution times and bottlenecks. Use for:
+
+- Long-running processes
+- Database queries
+- API calls
+- Critical user flows
+
+**Audit Log**
+Track data changes. Use for:
+
+- User modifications
+- Permission changes
+- Critical record updates
+- Configuration changes
+
+**Security Log**
+Monitor security events. Use for:
+
+- Login attempts
+- Permission changes
+- Suspicious activities
+- Access violations
+
+**API Log**
+Track API interactions. Use for:
+
+- External service calls
+- Endpoint monitoring
+- Integration debugging
+- API performance
+
+**Database Log**
+Monitor database operations. Use for:
+
+- Critical data changes
+- Schema updates
+- Bulk operations
+- Data integrity checks
+
+**Job Log**
+Track background tasks. Use for:
+
+- Queue processing
+- Scheduled tasks
+- Long-running jobs
+- Failed job analysis
+
+**Cache Log**
+Monitor cache operations. Use for:
+
+- Cache hits/misses
+- Cache invalidation
+- Memory usage
+- Performance optimization
+
+**Request Log**
+Track HTTP requests. Use for:
+
+- Important endpoints
+- User interactions
+- Error tracking
+- Performance monitoring
+
+**Payment Log**
+Monitor financial transactions. Use for:
+
+- Payment processing
+- Refunds
+- Subscription changes
+- Payment errors
+
+**Notification Log**
+Track communication events. Use for:
+
+- Email sending
+- SMS delivery
+- Push notifications
+- Communication errors
+
+**File Log**
+Monitor file operations. Use for:
+
+- File uploads
+- Downloads
+- Storage operations
+- File processing
+
+**Auth Log**
+Track authentication events. Use for:
+
+- Login/logout
+- Password resets
+- 2FA events
+- Session management
+
+**Export Log**
+Monitor data exports. Use for:
+
+- Report generation
+- Bulk downloads
+- Data migrations
+- Export errors
+
 ### Basic Logging
 
 ```php
