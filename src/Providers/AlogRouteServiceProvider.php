@@ -11,8 +11,11 @@ class AlogRouteServiceProvider extends ServiceProvider
     {
         $this->routes(function (): void {
             if ($this->app->environment('local')) {
-                Route::middleware(['web'])
-                    ->group(base_path('routes/advanced-log.php'));
+                $routePath = base_path('routes/advanced-log.php');
+                if (file_exists($routePath)) {
+                    Route::middleware(['web'])
+                        ->group($routePath);
+                }
             }
         });
     }

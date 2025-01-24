@@ -12,6 +12,10 @@ use Tfo\AdvancedLog\Console\InstallCommand;
 
 class LoggingServiceProvider extends ServiceProvider
 {
+
+    protected $providers = [
+        AlogRouteServiceProvider::class,
+    ];
     public function register(): void
     {
 
@@ -45,21 +49,11 @@ class LoggingServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // if ($this->app->runningInConsole()) {
-        //     $this->publishes([
-        //         __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
-        //     ], 'advanced-log-config');
-        // }
-
         if ($this->app->runningInConsole()) {
-
-            // $this->publishes([
-            //     __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
-            //     __DIR__ . '/../../routes/advanced-log.php' => base_path('routes/advanced-log.php'),
-            // ], 'laravel-assets');
-
-            $this->call('vendor:publish', ['--tag' => 'laravel-assets']);
-
+            $this->publishes([
+                __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
+                __DIR__ . '/../../routes/advanced-log.php' => base_path('routes/advanced-log.php'),
+            ], 'advanced-logger-config');
         }
     }
 
