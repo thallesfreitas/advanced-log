@@ -179,11 +179,11 @@ class InstallCommand extends Command
         }
 
         $providers = require $providersPath;
-        $providerClass = 'App\\Providers\\LoggingServiceProvider::class';
+        $providerClass = 'App\\Providers\\LoggingServiceProvider';
 
         if (!in_array($providerClass, $providers)) {
             $providers[] = $providerClass;
-            $content = "<?php\n\nreturn [\n    " . implode(",\n    ", $providers) . ",\n];";
+            $content = "<?php\n\nreturn [\n    " . implode(",\n    ", $providers) . "::class ,\n];";
             File::put($providersPath, $content);
         }
 
@@ -194,12 +194,12 @@ class InstallCommand extends Command
     private function registerProviderLegacy(): bool
     {
         $configAppPath = config_path('app.php');
-        $providerClass = 'App\\Providers\\LoggingServiceProvider::class';
+        $providerClass = 'App\\Providers\\LoggingServiceProvider';
 
         $appConfig = File::get($configAppPath);
         if (!str_contains($appConfig, $providerClass)) {
             $pattern = "/'providers' => \[/";
-            $replacement = "'providers' => [\n        " . $providerClass . ",";
+            $replacement = "'providers' => [\n        " . $providerClass . "::class ,";
             $appConfig = preg_replace($pattern, $replacement, $appConfig);
             File::put($configAppPath, $appConfig);
         }
