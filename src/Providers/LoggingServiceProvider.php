@@ -20,10 +20,10 @@ class LoggingServiceProvider extends ServiceProvider
                 InstallCommand::class,
             ]);
         }
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../config/advanced-logger.php',
-            'advanced-logger'
-        );
+        // $this->mergeConfigFrom(
+        //     __DIR__ . '/../../config/advanced-logger.php',
+        //     'advanced-logger'
+        // );
 
         $this->app->extend('log', function ($log) {
             $monolog = $log->getLogger();
@@ -45,11 +45,11 @@ class LoggingServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
-            ], 'advanced-logger-config');
-        }
+        // if ($this->app->runningInConsole()) {
+        //     $this->publishes([
+        //         __DIR__ . '/../../config/advanced-logger.php' => config_path('advanced-logger.php'),
+        //     ], 'advanced-logger-config');
+        // }
 
         if ($this->app->runningInConsole()) {
 

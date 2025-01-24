@@ -10,9 +10,8 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app()->environment('local')) {
-            Route::prefix('logs')
-                ->middleware(['web'])
-                ->group(__DIR__ . '/../../routes/test.php');
+            Route::middleware(['web'])
+                ->group(base_path('routes/test_routes.php'));
         }
     }
 }
