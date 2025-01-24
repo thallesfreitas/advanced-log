@@ -305,4 +305,16 @@ class InstallCommand extends Command
             File::put($file, $content);
         }
     }
+
+
+    private function updateNamespace(string $file, string $namespace): void
+    {
+        $content = File::get($file);
+        $content = preg_replace(
+            '/namespace\s+[^;]+;/',
+            'namespace ' . $namespace . ';',
+            $content
+        );
+        File::put($file, $content);
+    }
 }
