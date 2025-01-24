@@ -181,7 +181,6 @@ class InstallCommand extends Command
             return false;
         }
     }
-
     private function registerProviderLaravel11(): bool
     {
         $providersPath = base_path('bootstrap/providers.php');
@@ -189,20 +188,30 @@ class InstallCommand extends Command
             throw new \Exception('providers.php not found');
         }
 
-        // Load existing providers
         $content = File::get($providersPath);
 
-        // Fix any providers missing ::class
-        $content = preg_replace('/(\b[A-Z][A-Za-z0-9\\\\]+)(?!::class|\[),?/m', '$1::class,', $content);
+        // Extrair array de providers
+        preg_match('/return\s*\[(.*?)\];/s', $content, $matches);
+        $providersContent = $matches[1];
 
-        // Add new provider if not exists
-        if (!str_contains($content, 'LoggingServiceProvider::class')) {
-            $content = preg_replace(
-                '/(\];)/',
-                "    App\\Providers\\LoggingServiceProvider::class,\n$1",
-                $content
-            );
+        // Separar providers em array
+        $providers = array_filter(array_map('trim', explode(',', $providersContent)));
+
+        // Adicionar ::class onde necessário
+        $providers = array_map(function ($provider) {
+            if (!str_ends_with($provider, '::class')) {
+                $provider .= '::class';
+            }
+            return $provider;
+        }, $providers);
+
+        // Adicionar novo provider se não existir
+        if (!in_array('App\Providers\LoggingServiceProvider::class', $providers)) {
+            $providers[] = 'App\Providers\LoggingServiceProvider::class';
         }
+
+        // Reconstruir arquivo
+        $content = "<?php\n\nreturn [\n    " . implode(",\n    ", $providers) . "\n];";
 
         File::put($providersPath, $content);
         return true;
