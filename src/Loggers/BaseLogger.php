@@ -77,8 +77,10 @@ abstract class BaseLogger
         $sensitiveKeys = ['password', 'token', 'secret', 'key', 'auth'];
 
         return array_map(function ($value, $key) use ($sensitiveKeys) {
-            if (is_string($key) && str_contains(strtolower($key), $sensitiveKeys)) {
-                return '[REDACTED]';
+            foreach ($sensitiveKeys as $sensitiveKey) {
+                if (is_string($key) && str_contains(strtolower($key), $sensitiveKey)) {
+                    return '[REDACTED]';
+                }
             }
             return $value;
         }, $context, array_keys($context));
