@@ -12,8 +12,7 @@
   "scripts": {
     "test": "vendor/bin/phpunit",
     "test-coverage": "vendor/bin/phpunit --coverage-text",
-    "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-    "post-package-install:": "php artisan advanced-log:install"
+    "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
   },
   "require": {
     "php": "^8.1",
