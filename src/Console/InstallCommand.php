@@ -42,9 +42,7 @@ class InstallCommand extends Command
 
     private function publishConfig()
     {
-        $this->call('vendor:publish', [
-            '--tag' => 'advanced-logger-config'
-        ]);
+        $this->call('vendor:publish', ['--tag' => 'laravel-assets']);
     }
 
     private function publishLoggers()
@@ -139,11 +137,11 @@ class InstallCommand extends Command
 
         try {
             $routesDir = base_path('routes');
-            $testRoutesPath = $routesDir . '/advanced-log-test.php';
+            $testRoutesPath = $routesDir . '/routes/test_routes.php';
             $webRoutesPath = $routesDir . '/web.php';
 
             // Adicionar require no web.php se não existir
-            $requireLine = "\nrequire __DIR__.'/advanced-log-test.php';";
+            $requireLine = "\nrequire __DIR__.'/routes/test_routes.php';";
             if (!File::exists($webRoutesPath)) {
                 throw new \Exception('web.php not found');
             }
@@ -153,7 +151,6 @@ class InstallCommand extends Command
             }
 
             $routesContent = <<<'EOT'
-<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Support\ALog;
