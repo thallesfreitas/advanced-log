@@ -5,7 +5,7 @@ return [
         'slack' => [
             'webhook_url' => env('LOGGER_SLACK_WEBHOOK_URL', ''),
             'channel' => env('LOGGER_SLACK_CHANNEL', '#logs'),
-            'username' => env('LOGGER_SLACK_USERNAME', 'Logger Bot'),
+            'username' => env('LOGGER_SLACK_USERNAME', 'LoggerBot'),
         ],
 
         'sentry' => [

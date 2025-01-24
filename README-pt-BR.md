@@ -65,7 +65,7 @@ O comando advanced-log:install irá:
 # Configuração do Slack
 LOGGER_SLACK_WEBHOOK_URL=sua-webhook-url
 LOGGER_SLACK_CHANNEL=#seu-canal
-LOGGER_SLACK_USERNAME=Logger Bot
+LOGGER_SLACK_USERNAME=LoggerBot
 
 # Configuração do Sentry
 LOGGER_SENTRY_DSN=seu-sentry-dsn

@@ -26,7 +26,7 @@ php artisan advanced-log:install
 ```env
 LOGGER_SLACK_WEBHOOK_URL=your-webhook-url
 LOGGER_SLACK_CHANNEL=#your-channel
-LOGGER_SLACK_USERNAME=Logger Bot
+LOGGER_SLACK_USERNAME=LoggerBot
 LOGGER_ENABLE_SLACK=true
 ```
 

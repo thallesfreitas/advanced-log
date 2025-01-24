@@ -65,7 +65,7 @@ Publish test routes
 # Slack Configuration
 LOGGER_SLACK_WEBHOOK_URL=your-webhook-url
 LOGGER_SLACK_CHANNEL=#your-channel
-LOGGER_SLACK_USERNAME=Logger Bot
+LOGGER_SLACK_USERNAME=LoggerBot
 
 # Sentry Configuration
 LOGGER_SENTRY_DSN=your-sentry-dsn
