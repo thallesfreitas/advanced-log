@@ -10,7 +10,7 @@ use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;
-use VendorName\PackageName\Console\InstallCommand;
+use Tfo\AdvancedLog\Console\InstallCommand;
 
 class LoggingServiceProvider extends ServiceProvider
 {
