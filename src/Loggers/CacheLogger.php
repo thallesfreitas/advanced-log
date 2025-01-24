@@ -48,12 +48,13 @@ class CacheLogger extends BaseLogger
         );
     }
 
-    private function getLogLevel(): Level
+    private function getLogLevel(): \Monolog\Level
     {
-        return match ($this->action) {
-            'miss', 'error' => self::WARNING,
-            'flush', 'clear' => self::NOTICE,
-            default => self::DEBUG
+        return match ($this->status) {
+            'failed' => Level::Error,
+            'retrying' => Level::Warning,
+            'started' => Level::Debug,
+            default => Level::Info
         };
     }
 }
