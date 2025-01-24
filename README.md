@@ -4,7 +4,7 @@
 
 [Leia em Português](README-pt-BR.md)
 
-Advanced logging system for Laravel applications with integrated support for Slack, Sentry, and DataDog.
+Advanced logging system for Laravel applications with integrated support for Slack, Sentry, and DataDog (Soon).
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tfo/advanced-log.svg?style=flat-square)](https://packagist.org/packages/tfo/advanced-log)
 [![Total Downloads](https://img.shields.io/packagist/dt/tfo/advanced-log.svg?style=flat-square)](https://packagist.org/packages/tfo/advanced-log)
@@ -21,10 +21,19 @@ Advanced logging system for Laravel applications with integrated support for Sla
 - 🔒 Secure credentials handling
 - 🛠 Simplified configuration
 
+## Log Destinations
+
+Logs are sent to:
+
+- Local file (storage/logs/laravel.log)
+- Slack (via webhook)
+- Sentry (if configured)
+- DataDog (if configured) SOON
+
 ## Requirements
 
 - PHP ^8.1
-- Laravel ^10.0
+- Laravel ^10.0|^11.0
 
 ## Installation
 
@@ -39,8 +48,16 @@ composer require tfo/advanced-log
 1. Publish the configuration file:
 
 ```bash
-php artisan vendor:publish --tag=advanced-logger-config
+php artisan advanced-logger:install
 ```
+
+The installer will:
+
+Publish configurations
+Copy loggers to app/Loggers
+Install ServiceProvider
+Add .env variables
+Publish test routes
 
 2. Add these variables to your `.env` file:
 
@@ -90,7 +107,6 @@ use Tfo\AdvancedLog\Support\ALog;
 ```
 
 ### Performance Logging
-
 
 ```php
 $startTime = microtime(true);

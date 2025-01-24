@@ -4,7 +4,7 @@
 
 [Read in English](README.md)
 
-Sistema avançado de logs para aplicações Laravel com suporte integrado para Slack, Sentry e DataDog.
+Sistema avançado de logs para aplicações Laravel com suporte integrado para Slack, Sentry e DataDog (EM BREVE).
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/tfo/advanced-log.svg?style=flat-square)](https://packagist.org/packages/tfo/advanced-log)
 [![Total Downloads](https://img.shields.io/packagist/dt/tfo/advanced-log.svg?style=flat-square)](https://packagist.org/packages/tfo/advanced-log)
@@ -21,10 +21,19 @@ Sistema avançado de logs para aplicações Laravel com suporte integrado para S
 - 🔒 Tratamento seguro de credenciais
 - 🛠 Configuração simplificada
 
+## Destino dos Logs
+
+Os logs são enviados para:
+
+- Arquivo local (storage/logs/laravel.log)
+- Slack (configurável por webhook)
+- Sentry (se configurado)
+- DataDog (se configurado) (EM BREVE)
+
 ## Requisitos
 
 - PHP ^8.1
-- Laravel ^10.0
+- Laravel ^10.0|^11.0
 
 ## Instalação
 
@@ -39,8 +48,16 @@ composer require tfo/advanced-log
 1. Publique o arquivo de configuração:
 
 ```bash
-php artisan vendor:publish --tag=advanced-logger-config
+php artisan advanced-logger:install
 ```
+
+O comando advanced-logger:install irá:
+
+- Publicar arquivos de configuração
+- Copiar loggers para app/Loggers
+- Instalar e registrar o ServiceProvider
+- Adicionar variáveis ao .env
+- Publicar rotas de teste
 
 2. Adicione estas variáveis ao seu arquivo `.env`:
 
