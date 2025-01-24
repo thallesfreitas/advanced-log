@@ -4,8 +4,8 @@ namespace Tfo\AdvancedLog\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Tfo\AdvancedLog\Providers\AlogRouteServiceProvider;
-use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Formatters\SlackFormatter;
+use Tfo\AdvancedLog\Services\Logging\Handlers\MultiChannelHandler;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SlackNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\SentryNotificationService;
 use Tfo\AdvancedLog\Services\Logging\Notifications\DataDogNotificationService;

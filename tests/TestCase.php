@@ -14,13 +14,5 @@ class TestCase extends BaseTestCase
         ];
     }
 
-    protected function assertEquals($expected, $actual, string $message = ''): void
-    {
-        Assert::assertEquals($expected, $actual, $message);
-    }
 
-    protected function fail(string $message): void
-    {
-        Assert::fail($message);
-    }
 }
