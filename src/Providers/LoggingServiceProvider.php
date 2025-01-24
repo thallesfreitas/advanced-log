@@ -50,45 +50,19 @@ class LoggingServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // if ($this->app->runningInConsole()) {
-        //     $this->publishes([
-        //         __DIR__ . '/../../config/advanced-log.php' => config_path('advanced-log.php'),
-        //         __DIR__ . '/../../routes/advanced-log.php' => base_path('routes/advanced-log.php'),
-        //     ], 'advanced-logger-config');
-        // }
+
     }
-
-    // private function getEnabledServices(): array
-    // {
-    //     $services = [];
-
-    //     if (config('advanced-log.services.slack')) {
-    //         $services[] = new SlackNotificationService();
-    //     }
-
-    //     if (config('advanced-log.services.sentry')) {
-    //         $services[] = new SentryNotificationService();
-    //     }
-
-    //     if (config('advanced-log.services.datadog')) {
-    //         $services[] = new DataDogNotificationService();
-    //     }
-
-    //     return $services;
-    // }
 
 
     private function getEnabledServices(): array
     {
         $env = config('advanced-log.env');
 
-        // Log::debug();
-
         $enabledLogs = explode(',', config("advanced-log.enabled.$env"));
 
         $services = [];
         foreach ($enabledLogs as $level) {
-            $levelServices = explode(',', config("advanced-log.services.$level"));
+            $levelServices = explode(',', config("advanced-log.logtype.$level"));
             foreach ($levelServices as $service) {
                 if (!in_array($service, $services)) {
                     $services[] = $this->createNotificationService($service);

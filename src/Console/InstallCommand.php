@@ -5,15 +5,15 @@ namespace Tfo\AdvancedLog\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class InstallCommand extends Command
 {
     protected $signature = 'advanced-log:install';
-
     protected $description = 'Install the Advanced Logger package';
-
     private $sourcePath;
     private $destinationPath;
+    private $backupFiles = [];
 
     public function __construct()
     {
@@ -27,295 +27,265 @@ class InstallCommand extends Command
         try {
             $this->info('Installing Advanced Logger...');
 
-            $this->publishConfig();
-            $this->publishLoggers();
-            $this->publishProvider();
-            $this->updateEnvironmentFile();
-            $this->publishRoutes();
-            $this->registerServiceProvider();
+            if (!$this->checkRequirements()) {
+                return 1;
+            }
+
+            $this->backup();
+
+            $steps = [
+                'publishConfig',
+                'publishLoggers',
+                'publishProvider',
+                'updateEnvironmentFile',
+                'publishRoutes',
+            ];
+
+            foreach ($steps as $step) {
+                if (!$this->$step()) {
+                    $this->rollback();
+                    return 1;
+                }
+            }
 
             $this->info('Advanced Logger installed successfully.');
             $this->info('Please update your .env file with your service credentials.');
+            return 0;
+
         } catch (\Exception $e) {
             $this->error('Installation failed: ' . $e->getMessage());
+            Log::error('Advanced Logger installation failed', ['error' => $e->getMessage()]);
+            $this->rollback();
+            return 1;
         }
     }
 
-    private function publishConfig()
+    private function checkRequirements(): bool
     {
-        $this->call('vendor:publish', ['--tag' => 'laravel-assets']);
+        $requirements = [
+            'PHP Version >= 8.1' => version_compare(PHP_VERSION, '8.1.0', '>='),
+            'Laravel >= 10.0' => version_compare($this->getApplication()->getVersion(), '10.0.0', '>='),
+            'Write permissions' => is_writable(base_path())
+        ];
+
+        $pass = true;
+        foreach ($requirements as $name => $met) {
+            if (!$met) {
+                $this->error("Requirement not met: $name");
+                $pass = false;
+            }
+        }
+        return $pass;
     }
 
-    private function publishLoggers()
+    private function backup(): void
+    {
+        $gitignore = base_path('.gitignore');
+        $backupPattern = "\n# Advanced Logger Backups\n*.backup-*\n";
+
+        if (!str_contains(File::get($gitignore), $backupPattern)) {
+            File::append($gitignore, $backupPattern);
+        }
+
+        $filesToBackup = [
+            config_path('app.php'),
+            base_path('.env'),
+            app_path('Providers/LoggingServiceProvider.php')
+        ];
+
+        foreach ($filesToBackup as $file) {
+            if (File::exists($file)) {
+                $backupPath = $file . '.backup-' . time();
+                File::copy($file, $backupPath);
+                $this->backupFiles[] = [
+                    'original' => $file,
+                    'backup' => $backupPath
+                ];
+            }
+        }
+    }
+
+    private function rollback(): void
+    {
+        foreach ($this->backupFiles as $backup) {
+            if (File::exists($backup['backup'])) {
+                File::copy($backup['backup'], $backup['original']);
+                File::delete($backup['backup']);
+            }
+        }
+    }
+
+    private function publishConfig(): bool
+    {
+        try {
+            $configSource = $this->sourcePath . 'config/advanced-log.php';
+            $configDest = config_path('advanced-log.php');
+
+            if (!File::exists($configSource)) {
+                throw new \Exception('Config file not found');
+            }
+
+            File::copy($configSource, $configDest);
+            $this->info('Config published successfully');
+            return true;
+        } catch (\Exception $e) {
+            $this->error('Error publishing config: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function publishLoggers(): bool
     {
         try {
             $loggersPath = app_path('Loggers');
-            if (!File::exists($loggersPath)) {
-                File::makeDirectory($loggersPath, 0755, true);
+            $sourceLoggers = $this->sourcePath . 'src/Loggers';
+
+            if (!File::exists($sourceLoggers)) {
+                throw new \Exception('Logger files not found');
             }
 
-            $sourceLoggers = $this->sourcePath . 'src/Loggers';
+            File::makeDirectory($loggersPath, 0755, true, true);
             File::copyDirectory($sourceLoggers, $loggersPath);
             $this->updateNamespaces($loggersPath);
 
-            $this->info('Loggers published successfully.');
+            $this->info('Loggers published successfully');
+            return true;
         } catch (\Exception $e) {
-            throw new \Exception('Error publishing loggers: ' . $e->getMessage());
+            $this->error('Error publishing loggers: ' . $e->getMessage());
+            return false;
         }
     }
 
-    private function publishProvider()
+    private function publishProvider(): bool
     {
         try {
-            $providerSource = $this->sourcePath . 'src/Providers/LoggingServiceProvider.php';
-            $providerDest = app_path('Providers/LoggingServiceProvider.php');
+            $laravelVersion = $this->getApplication()->getVersion();
 
-            File::copy($providerSource, $providerDest);
-            $this->updateNamespace($providerDest, 'App\\Providers');
-
-            $this->info('Provider published successfully.');
-        } catch (\Exception $e) {
-            throw new \Exception('Error publishing provider: ' . $e->getMessage());
-        }
-    }
-
-    private function registerServiceProvider()
-    {
-        try {
-            $configAppPath = config_path('app.php');
-            $providerClass = 'App\\Providers\\LoggingServiceProvider::class';
-
-            $appConfig = File::get($configAppPath);
-            if (!str_contains($appConfig, $providerClass)) {
-                $pattern = "/'providers' => \[/";
-                $replacement = "'providers' => [\n        " . $providerClass . ",";
-                $appConfig = preg_replace($pattern, $replacement, $appConfig);
-                File::put($configAppPath, $appConfig);
+            if (version_compare($laravelVersion, '11.0', '>=')) {
+                return $this->registerProviderLaravel11();
             }
-
-            $this->info('Service provider registered successfully.');
+            return $this->registerProviderLegacy();
         } catch (\Exception $e) {
-            throw new \Exception('Error registering service provider: ' . $e->getMessage());
+            $this->error('Error registering provider: ' . $e->getMessage());
+            return false;
         }
     }
 
-    private function updateEnvironmentFile()
+    private function registerProviderLaravel11(): bool
     {
-        try {
-            $envPath = base_path('.env');
-            $envExamplePath = $this->sourcePath . '.env.example';
-
-            if (File::exists($envPath)) {
-                $existing = File::get($envPath);
-                $example = File::get($envExamplePath);
-
-                $lines = explode("\n", $example);
-                foreach ($lines as $line) {
-                    if (empty(trim($line)))
-                        continue;
-
-                    if (strpos($line, '=') !== false) {
-                        list($key) = explode('=', $line);
-                        if (strpos($existing, $key . '=') === false) {
-                            File::append($envPath, "\n" . $line);
-                        }
-                    }
-                }
-
-                $this->info('Environment variables added successfully.');
-            }
-        } catch (\Exception $e) {
-            throw new \Exception('Error updating environment file: ' . $e->getMessage());
+        $providersPath = base_path('bootstrap/providers.php');
+        if (!File::exists($providersPath)) {
+            throw new \Exception('providers.php not found');
         }
+
+        $providers = require $providersPath;
+        $providerClass = 'App\\Providers\\LoggingServiceProvider::class';
+
+        if (!in_array($providerClass, $providers)) {
+            $providers[] = $providerClass;
+            $content = "<?php\n\nreturn [\n    " . implode(",\n    ", $providers) . ",\n];";
+            File::put($providersPath, $content);
+        }
+
+        $this->info('Service provider registered for Laravel 11');
+        return true;
     }
 
-    //     private function publishRoutes()
-//     {
-//         if (App::environment('production')) {
-//             $this->warn('Test routes are not published in production environment.');
-//             return;
-//         }
+    private function registerProviderLegacy(): bool
+    {
+        $configAppPath = config_path('app.php');
+        $providerClass = 'App\\Providers\\LoggingServiceProvider::class';
 
-    //         try {
-//             $routesDir = base_path('routes');
-//             $testRoutesPath = $routesDir . '/advanced-log.php';
-//             $webRoutesPath = $routesDir . '/web.php';
+        $appConfig = File::get($configAppPath);
+        if (!str_contains($appConfig, $providerClass)) {
+            $pattern = "/'providers' => \[/";
+            $replacement = "'providers' => [\n        " . $providerClass . ",";
+            $appConfig = preg_replace($pattern, $replacement, $appConfig);
+            File::put($configAppPath, $appConfig);
+        }
 
-    //             // Adicionar require no web.php se não existir
-//             $requireLine = "\nrequire __DIR__.'/routes/advanced-log.php';";
-//             if (!File::exists($webRoutesPath)) {
-//                 throw new \Exception('web.php not found');
-//             }
+        $this->info('Service provider registered for Laravel 10 or below');
+        return true;
+    }
 
-    //             if (!str_contains(File::get($webRoutesPath), $requireLine)) {
-//                 File::append($webRoutesPath, $requireLine);
-//             }
-
-    //             $routesContent = <<<'EOT'
-
-    // use Illuminate\Support\Facades\Route;
-// use App\Support\ALog;
-
-    // // Test Routes for Advanced Logger
-// Route::prefix('test-logs')->middleware(['web'])->group(function () {
-//    Route::get('/performance', function () {
-//        $startTime = microtime(true);
-//        sleep(1);
-//        $duration = (microtime(true) - $startTime) * 1000;
-//        ALog::performance('Test Operation', $duration);
-//        return 'Performance log tested';
-//    });
-
-    //    Route::get('/audit', function () {
-//        ALog::audit('update', 'User', 1, [
-//            'name' => ['old' => 'John', 'new' => 'Johnny'],
-//            'email' => ['old' => 'john@example.com', 'new' => 'johnny@example.com']
-//        ]);
-//        return 'Audit log tested';
-//    });
-
-    //    Route::get('/security', function () {
-//        ALog::security('Login Failed', [
-//            'email' => 'user@example.com',
-//            'attempts' => 3
-//        ]);
-//        return 'Security log tested';
-//    });
-
-    //    Route::get('/api', function () {
-//        $response = response()->json(['status' => 'success']);
-//        ALog::api('/api/users', 'GET', $response, 150.5);
-//        return 'API log tested';
-//    });
-
-    //    Route::get('/database', function () {
-//        ALog::database('create', 'users', 1, [
-//            'data' => ['name' => 'John', 'email' => 'john@example.com']
-//        ]);
-//        return 'Database log tested';
-//    });
-
-    //    Route::get('/job', function () {
-//        ALog::job('SendWelcomeEmail', 'completed', [
-//            'user_id' => 1,
-//            'duration' => 1500
-//        ]);
-//        return 'Job log tested';
-//    });
-
-    //    Route::get('/cache', function () {
-//        ALog::cache('hit', 'user:123', [
-//            'ttl' => 3600
-//        ]);
-//        return 'Cache log tested';
-//    });
-
-    //    Route::get('/request', function () {
-//        ALog::request('API Request', [
-//            'endpoint' => '/api/users',
-//            'params' => ['page' => 1]
-//        ]);
-//        return 'Request log tested';
-//    });
-
-    //    Route::get('/payment', function () {
-//        ALog::payment('success', 99.99, 'stripe', [
-//            'transaction_id' => 'tx_123'
-//        ]);
-//        return 'Payment log tested';
-//    });
-
-    //    Route::get('/notification', function () {
-//        ALog::notification('email', 'user@example.com', 'welcome', [
-//            'template' => 'welcome-email'
-//        ]);
-//        return 'Notification log tested';
-//    });
-
-    //    Route::get('/file', function () {
-//        ALog::file('upload', 'images/profile.jpg', [
-//            'size' => '2.5MB',
-//            'type' => 'image/jpeg'
-//        ]);
-//        return 'File log tested';
-//    });
-
-    //    Route::get('/auth', function () {
-//        ALog::auth('login_success', [
-//            'remember' => true,
-//            'device' => 'iPhone 13'
-//        ]);
-//        return 'Auth log tested';
-//    });
-
-    //    Route::get('/export', function () {
-//        ALog::export('users', 1000, [
-//            'format' => 'csv',
-//            'filters' => ['status' => 'active']
-//        ]);
-//        return 'Export log tested';
-//    });
-// });
-// EOT;
-
-    //             File::put($testRoutesPath, $routesContent);
-//             $this->info('Test routes published successfully.');
-//         } catch (\Exception $e) {
-//             throw new \Exception('Error publishing routes: ' . $e->getMessage());
-//         }
-//     }
-
-
-    private function publishRoutes()
+    private function publishRoutes(): bool
     {
         if (App::environment('production')) {
-            $this->warn('Test routes are not published in production environment.');
-            return;
+            $this->warn('Test routes are not published in production environment');
+            return true;
         }
 
         try {
             $sourceRoute = $this->sourcePath . 'routes/advanced-log.php';
             $destRoute = base_path('routes/advanced-log.php');
 
+            if (!File::exists($sourceRoute)) {
+                throw new \Exception('Route file not found');
+            }
+
             File::copy($sourceRoute, $destRoute);
 
-            $this->info('Test routes published to: routes/advanced-log.php');
-            $this->info('To enable test routes, add this to your RouteServiceProvider::boot():');
+            $this->info('Test routes published successfully');
+            $this->info('Add to RouteServiceProvider::boot():');
             $this->info('Route::middleware("web")->group(base_path("routes/advanced-log.php"));');
 
+            return true;
         } catch (\Exception $e) {
-            throw new \Exception('Error publishing routes: ' . $e->getMessage());
+            $this->error('Error publishing routes: ' . $e->getMessage());
+            return false;
         }
     }
 
-    private function updateNamespaces($path)
+    private function updateEnvironmentFile(): bool
     {
         try {
-            $files = File::allFiles($path);
-            foreach ($files as $file) {
-                $content = File::get($file);
-                $content = str_replace(
-                    'namespace Tfo\AdvancedLog',
-                    'namespace App',
-                    $content
-                );
-                File::put($file, $content);
+            $envPath = base_path('.env');
+            $envExamplePath = $this->sourcePath . '.env.example';
+
+            if (!File::exists($envPath) || !File::exists($envExamplePath)) {
+                throw new \Exception('Environment files not found');
             }
+
+            $existing = File::get($envPath);
+            $example = File::get($envExamplePath);
+            $added = false;
+
+            $lines = explode("\n", $example);
+            foreach ($lines as $line) {
+                if (empty(trim($line)))
+                    continue;
+
+                if (strpos($line, '=') !== false) {
+                    list($key) = explode('=', $line);
+                    if (!str_contains($existing, $key . '=')) {
+                        File::append($envPath, "\n" . $line);
+                        $added = true;
+                    }
+                }
+            }
+
+            if ($added) {
+                $this->info('Environment variables added successfully');
+            } else {
+                $this->info('No new environment variables to add');
+            }
+            return true;
         } catch (\Exception $e) {
-            throw new \Exception('Error updating namespaces: ' . $e->getMessage());
+            $this->error('Error updating environment file: ' . $e->getMessage());
+            return false;
         }
     }
 
-    private function updateNamespace($file, $newNamespace)
+    private function updateNamespaces($path): void
     {
-        try {
+        foreach (File::allFiles($path) as $file) {
             $content = File::get($file);
-            $pattern = "/namespace.*?;/";
-            $replacement = "namespace " . $newNamespace . ";";
-            $content = preg_replace($pattern, $replacement, $content);
+            $content = str_replace(
+                'namespace Tfo\AdvancedLog',
+                'namespace App',
+                $content
+            );
             File::put($file, $content);
-        } catch (\Exception $e) {
-            throw new \Exception('Error updating namespace: ' . $e->getMessage());
         }
     }
 }

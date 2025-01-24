@@ -1,35 +1,33 @@
 <?php
 
 return [
-    'custom' => [
-        'driver' => 'custom',
-        'via' => Tfo\AdvancedLog\Services\Logging\CustomLogger::class,
-    ],
-    'slack' => [
-        'webhook_url' => env('LOGGER_SLACK_WEBHOOK_URL', ''),
-        'channel' => env('LOGGER_SLACK_CHANNEL', '#logs'),
-        'username' => env('LOGGER_SLACK_USERNAME', 'Logger Bot'),
-    ],
+    'services' => [
+        'slack' => [
+            'webhook_url' => env('LOGGER_SLACK_WEBHOOK_URL', ''),
+            'channel' => env('LOGGER_SLACK_CHANNEL', '#logs'),
+            'username' => env('LOGGER_SLACK_USERNAME', 'Logger Bot'),
+        ],
 
-    'sentry' => [
-        'dsn' => env('LOGGER_SENTRY_DSN', ''),
-        'traces_sample_rate' => env('LOGGER_SENTRY_TRACES_SAMPLE_RATE', 1.0),
-    ],
+        'sentry' => [
+            'dsn' => env('LOGGER_SENTRY_DSN', ''),
+            'traces_sample_rate' => env('LOGGER_SENTRY_TRACES_SAMPLE_RATE', 1.0),
+        ],
 
-    'datadog' => [
-        'api_key' => env('LOGGER_DATADOG_API_KEY', ''),
-        'app_key' => env('LOGGER_DATADOG_APP_KEY', ''),
-        'service_name' => env('LOGGER_DATADOG_SERVICE', 'laravel-app'),
+        'datadog' => [
+            'api_key' => env('LOGGER_DATADOG_API_KEY', ''),
+            'app_key' => env('LOGGER_DATADOG_APP_KEY', ''),
+            'service_name' => env('LOGGER_DATADOG_SERVICE', 'laravel-app'),
+        ],
     ],
 
     'env' => env('LOGGER_ENV', 'development'),
 
     'enabled' => [
-        'dev' => env('LOGGER_ENABLED_DEV', 'performance,audit,security,api,database,job,cache,request,payment,notification,file,auth,export'),
+        'local' => env('LOGGER_ENABLED_LOCAL', 'performance,audit,security,api,database,job,cache,request,payment,notification,file,auth,export'),
         'prod' => env('LOGGER_ENABLED_PROD', 'security,api,database,cache,request,notification,file,auth,export'),
     ],
 
-    'services' => [
+    'logtype' => [
         'emergency' => env('LOGGER_EMERGENCY_SERVICES', 'slack,sentry'),
         'alert' => env('LOGGER_ALERT_SERVICES', 'slack,sentry'),
         'critical' => env('LOGGER_CRITICAL_SERVICES', 'slack,sentry'),
